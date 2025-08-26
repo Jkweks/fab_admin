@@ -4,5 +4,10 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL
 );
 
-INSERT INTO users (email, password) VALUES
-('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe');
+ALTER TABLE users ADD COLUMN IF NOT EXISTS first_name VARCHAR(255);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_name VARCHAR(255);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) NOT NULL DEFAULT 'user';
+
+INSERT INTO users (email, password, first_name, last_name, role) VALUES
+('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin')
+ON CONFLICT (email) DO NOTHING;
