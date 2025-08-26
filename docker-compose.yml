@@ -3,7 +3,7 @@ services:
   web:
     build: .
     ports:
-      - "8000:80"
+      - "8025:80"
     volumes:
       - ./frontend:/var/www/html
     environment:

@@ -1,9 +1,18 @@
-FROM php:8.1-apache
+# Use whatever version you prefer; 8.3 is current, 8.1 also works.
+FROM php:8.3-apache
+
+# System deps for pdo_pgsql (and useful extras)
 RUN apt-get update \
-    && docker-php-ext-install pdo pdo_pgsql \
-    && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y --no-install-recommends \
+       libpq-dev \
+  && docker-php-ext-install -j"$(nproc)" pdo_pgsql \
+  && a2enmod rewrite \
+  && rm -rf /var/lib/apt/lists/*
 
-# Enable Apache modules
-RUN a2enmod rewrite
+# (Optional) set Apache docroot if your app isn't in /var/www/html
+# ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+# RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+#     -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-WORKDIR /var/www/html
+# Copy your app
+COPY . /var/www/html
