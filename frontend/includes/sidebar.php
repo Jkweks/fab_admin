@@ -19,8 +19,8 @@
                     <a href='jobs.php' class='nav-item nav-link'><i class='fa fa-briefcase me-2'></i>Jobs</a>
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <a href='data.php' class='nav-item nav-link'><i class='fa fa-database me-2'></i>Data Management</a>
-                    <a href='add_pm.php' class='nav-item nav-link ms-4'><i class='fa fa-user-plus me-2'></i>Add Project Manager</a>
-                    <a href='add_job.php' class='nav-item nav-link ms-4'><i class='fa fa-plus me-2'></i>Add Job</a>
+                    <a href='add_pm.php' class='nav-item nav-link ms-4'>Add Project Manager</a>
+                    <a href='add_job.php' class='nav-item nav-link ms-4'>Add Job</a>
                     <?php endif; ?>
                 </div>
             </nav>
