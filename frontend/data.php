@@ -8,6 +8,30 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
     exit;
 }
+include 'includes/db.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['add_pm'])) {
+        $stmt = $pdo->prepare("INSERT INTO users (email, password, first_name, last_name, role) VALUES (?, ?, ?, ?, 'project_manager')");
+        $stmt->execute([
+            $_POST['email'],
+            password_hash($_POST['password'] ?? 'password', PASSWORD_DEFAULT),
+            $_POST['first_name'],
+            $_POST['last_name']
+        ]);
+    }
+    if (isset($_POST['add_job'])) {
+        $stmt = $pdo->prepare("INSERT INTO jobs (job_name, job_number, project_manager) VALUES (?, ?, ?)");
+        $stmt->execute([
+            $_POST['job_name'],
+            $_POST['job_number'],
+            $_POST['project_manager']
+        ]);
+    }
+}
+
+$pm_stmt = $pdo->query("SELECT id, first_name, last_name FROM users WHERE role = 'project_manager' ORDER BY first_name");
+$project_managers = $pm_stmt->fetchAll();
 ?>
 <?php include 'includes/header.php'; ?>
     <div class="container-xxl position-relative bg-white d-flex p-0">
@@ -20,7 +44,50 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                     <div class="col-12">
                         <div class="bg-light rounded h-100 p-4">
                             <h6 class="mb-4">Data Management</h6>
-                            <p>This page is only accessible to administrators.</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="mb-3">Add Project Manager</h6>
+                                    <form method="post">
+                                        <div class="mb-3">
+                                            <label class="form-label">First Name</label>
+                                            <input type="text" class="form-control" name="first_name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" name="last_name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" name="email" required>
+                                        </div>
+                                        <button type="submit" name="add_pm" class="btn btn-primary">Add Project Manager</button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="mb-3">Add Job</h6>
+                                    <form method="post">
+                                        <div class="mb-3">
+                                            <label class="form-label">Job Name</label>
+                                            <input type="text" class="form-control" name="job_name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Job Number</label>
+                                            <input type="text" class="form-control" name="job_number" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Project Manager</label>
+                                            <select class="form-select" name="project_manager" required>
+                                                <?php foreach ($project_managers as $pm): ?>
+                                                    <option value="<?php echo htmlspecialchars($pm['id']); ?>">
+                                                        <?php echo htmlspecialchars($pm['first_name'] . ' ' . $pm['last_name']); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <button type="submit" name="add_job" class="btn btn-primary">Add Job</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

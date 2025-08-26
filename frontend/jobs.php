@@ -4,6 +4,9 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: signin.php');
     exit;
 }
+include 'includes/db.php';
+$stmt = $pdo->query("SELECT jobs.job_name, jobs.job_number, CONCAT(users.first_name, ' ', users.last_name) AS project_manager FROM jobs LEFT JOIN users ON jobs.project_manager = users.id ORDER BY jobs.job_name");
+$jobs = $stmt->fetchAll();
 ?>
 <?php include 'includes/header.php'; ?>
     <div class="container-xxl position-relative bg-white d-flex p-0">
@@ -16,7 +19,26 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="col-12">
                         <div class="bg-light rounded h-100 p-4">
                             <h6 class="mb-4">Jobs</h6>
-                            <p>This is the jobs page.</p>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Job Name</th>
+                                            <th scope="col">Job Number</th>
+                                            <th scope="col">Project Manager</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($jobs as $job): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($job['job_name']); ?></td>
+                                            <td><?php echo htmlspecialchars($job['job_number']); ?></td>
+                                            <td><?php echo htmlspecialchars($job['project_manager']); ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
