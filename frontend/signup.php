@@ -3,6 +3,8 @@ session_start();
 require_once 'includes/db.php';
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $first_name = $_POST['first_name'] ?? '';
+    $last_name = $_POST['last_name'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
@@ -11,8 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Email already registered';
     } else {
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('INSERT INTO users (email, password) VALUES (?, ?)');
-        $stmt->execute([$email, $hash]);
+        $role = 'user';
+        $stmt = $pdo->prepare('INSERT INTO users (email, password, first_name, last_name, role) VALUES (?, ?, ?, ?, ?)');
+        $stmt->execute([$email, $hash, $first_name, $last_name, $role]);
         header('Location: signin.php');
         exit;
     }
@@ -36,6 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
                         <?php endif; ?>
                         <form method="post">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="firstName" placeholder="First Name" name="first_name" required>
+                                <label for="firstName">First Name</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="lastName" placeholder="Last Name" name="last_name" required>
+                                <label for="lastName">Last Name</label>
+                            </div>
                             <div class="form-floating mb-3">
                                 <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email" required>
                                 <label for="floatingInput">Email address</label>
