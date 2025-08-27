@@ -11,7 +11,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 include 'includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $stmt = $pdo->prepare('INSERT INTO door_parts (manufacturer, system, part_number, lx, ly, lz, function) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    $stmt = $pdo->prepare('INSERT INTO door_parts (manufacturer, system, part_number, lx, ly, lz, function, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
     $stmt->execute([
         $_POST['manufacturer'],
         $_POST['system'],
@@ -19,13 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['lx'] !== '' ? $_POST['lx'] : null,
         $_POST['ly'] !== '' ? $_POST['ly'] : null,
         $_POST['lz'] !== '' ? $_POST['lz'] : null,
-        $_POST['function']
+        $_POST['function'],
+        $_POST['category']
     ]);
     $part_id = $pdo->lastInsertId();
-    if (!empty($_POST['requires'])) {
-        $req_stmt = $pdo->prepare('INSERT INTO door_part_requirements (part_id, required_part_id) VALUES (?, ?)');
-        foreach ($_POST['requires'] as $req) {
-            $req_stmt->execute([$part_id, $req]);
+    if (!empty($_POST['required_parts'])) {
+        $req_stmt = $pdo->prepare('INSERT INTO door_part_requirements (part_id, required_part_id, quantity) VALUES (?, ?, ?)');
+        foreach ($_POST['required_parts'] as $index => $req) {
+            if ($req !== '') {
+                $qty = isset($_POST['required_quantities'][$index]) && $_POST['required_quantities'][$index] !== '' ? $_POST['required_quantities'][$index] : 1;
+                $req_stmt->execute([$part_id, $req, $qty]);
+            }
         }
     }
 }
@@ -70,6 +74,15 @@ $existing_parts = $parts_stmt->fetchAll();
                                     <input type='number' step='any' class='form-control' name='lz'>
                                 </div>
                                 <div class='mb-3'>
+                                    <label class='form-label'>Category</label>
+                                    <select class='form-select' name='category' required>
+                                        <option value='frame'>Frame Part</option>
+                                        <option value='fastener'>Fastener</option>
+                                        <option value='accessory'>Accessory</option>
+                                        <option value='door'>Door Part</option>
+                                    </select>
+                                </div>
+                                <div class='mb-3'>
                                     <label class='form-label'>Function</label>
                                     <select class='form-select' name='function' required>
                                         <option value='hinge_rail'>Hinge Rail</option>
@@ -79,16 +92,31 @@ $existing_parts = $parts_stmt->fetchAll();
                                     </select>
                                 </div>
                                 <div class='mb-3'>
-                                    <label class='form-label'>Requires</label>
-                                    <select class='form-select' name='requires[]' multiple>
-                                        <?php foreach ($existing_parts as $part): ?>
-                                            <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <small class='form-text text-muted'>Hold Ctrl (Cmd on Mac) to select multiple parts.</small>
+                                    <label class='form-label'>Requirements</label>
+                                    <div id='requirements'>
+                                        <div class='requirement d-flex mb-2'>
+                                            <select class='form-select me-2' name='required_parts[]'>
+                                                <option value=''>Select Required Part</option>
+                                                <?php foreach ($existing_parts as $part): ?>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <input type='number' class='form-control' name='required_quantities[]' min='1' value='1'>
+                                        </div>
+                                    </div>
+                                    <button type='button' class='btn btn-sm btn-secondary' id='addRequirement'>Add Requirement</button>
                                 </div>
                                 <button type='submit' class='btn btn-primary'>Add Part</button>
                             </form>
+                            <script>
+                                document.getElementById('addRequirement').addEventListener('click', function () {
+                                    var container = document.getElementById('requirements');
+                                    var template = container.querySelector('.requirement').cloneNode(true);
+                                    template.querySelector('select').selectedIndex = 0;
+                                    template.querySelector('input').value = 1;
+                                    container.appendChild(template);
+                                });
+                            </script>
                         </div>
                     </div>
                 </div>
