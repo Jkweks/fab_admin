@@ -10,6 +10,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 include 'includes/db.php';
 
+$manufacturers = $pdo->query('SELECT name FROM manufacturers ORDER BY name')->fetchAll();
+$systems = $pdo->query('SELECT name FROM systems ORDER BY name')->fetchAll();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = $_POST['category'];
     $lx = $ly = $lz = null;
@@ -65,11 +68,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <form method='post'>
                             <div class='mb-3'>
                                 <label class='form-label'>Manufacturer</label>
-                                <input type='text' class='form-control' name='manufacturer' required>
+                                <select class='form-select' name='manufacturer' required>
+                                    <option value=''>Select Manufacturer</option>
+                                    <?php foreach ($manufacturers as $m): ?>
+                                        <option value='<?php echo htmlspecialchars($m['name']); ?>'><?php echo htmlspecialchars($m['name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                             <div class='mb-3'>
                                 <label class='form-label'>System</label>
-                                <input type='text' class='form-control' name='system' required>
+                                <select class='form-select' name='system' required>
+                                    <option value=''>Select System</option>
+                                    <?php foreach ($systems as $s): ?>
+                                        <option value='<?php echo htmlspecialchars($s['name']); ?>'><?php echo htmlspecialchars($s['name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                             <div class='mb-3'>
                                 <label class='form-label'>Part Number</label>
