@@ -41,6 +41,16 @@ CREATE TABLE IF NOT EXISTS work_order_items (
     completed_by INTEGER REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS manufacturers (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS systems (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS door_parts (
     id SERIAL PRIMARY KEY,
     manufacturer VARCHAR(255) NOT NULL,

@@ -22,7 +22,9 @@
                     <a href='data.php' class='nav-item nav-link'><i class='fa fa-database me-2'></i>Data Management</a>
                     <a href='add_pm.php' class='nav-item nav-link ms-4'>Add Project Manager</a>
                     <a href='add_job.php' class='nav-item nav-link ms-4'>Add Job</a>
-                    <a href='add_door_part.php' class='nav-item nav-link ms-4'>Add Door Part</a>
+                    <a href='add_part.php' class='nav-item nav-link ms-4'>Add Part</a>
+                    <a href='edit_manufacturers.php' class='nav-item nav-link ms-4'>Edit Manufacturers</a>
+                    <a href='edit_systems.php' class='nav-item nav-link ms-4'>Edit Systems</a>
                     <?php endif; ?>
                 </div>
             </nav>
