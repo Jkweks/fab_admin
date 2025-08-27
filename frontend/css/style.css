@@ -275,3 +275,9 @@
     background: var(--dark);
     border-color: var(--primary);
 }
+
+/* Expand job/work order modal to 85% of the available width */
+#jobModal .modal-dialog {
+    width: 85%;
+    max-width: 85%;
+}
