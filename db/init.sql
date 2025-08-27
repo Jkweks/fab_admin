@@ -38,6 +38,32 @@ CREATE TABLE IF NOT EXISTS work_order_items (
     completed_by INTEGER REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS door_parts (
+    id SERIAL PRIMARY KEY,
+    manufacturer VARCHAR(255) NOT NULL,
+    system VARCHAR(255) NOT NULL,
+    part_number VARCHAR(255) NOT NULL,
+    lx NUMERIC,
+    ly NUMERIC,
+    lz NUMERIC,
+    function VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS door_part_requirements (
+    id SERIAL PRIMARY KEY,
+    part_id INTEGER REFERENCES door_parts(id) ON DELETE CASCADE,
+    required_part_id INTEGER REFERENCES door_parts(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS door_configurations (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    hinge_rail_id INTEGER REFERENCES door_parts(id),
+    lock_rail_id INTEGER REFERENCES door_parts(id),
+    top_rail_id INTEGER REFERENCES door_parts(id),
+    bottom_rail_id INTEGER REFERENCES door_parts(id)
+);
+
 INSERT INTO users (email, password, first_name, last_name, role) VALUES
 ('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin'),
 ('adama@example.com', '$2y$12$MmSdJZgZrqIbXU0cfGWL3OS9IEcGwxfYUIXjPZxCYTiPjsou6Ljce', 'Adam', 'A', 'project_manager'),

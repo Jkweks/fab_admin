@@ -23,6 +23,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
                             <ul class='list-group'>
                                 <li class='list-group-item'><a href='add_pm.php'>Add Project Manager</a></li>
                                 <li class='list-group-item'><a href='add_job.php'>Add Job</a></li>
+                                <li class='list-group-item'><a href='add_door_part.php'>Add Door Part</a></li>
                             </ul>
                         </div>
                     </div>
