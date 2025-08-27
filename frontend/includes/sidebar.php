@@ -17,10 +17,12 @@
                 <div class='navbar-nav w-100'>
                     <a href='index.php' class='nav-item nav-link'><i class='fa fa-tachometer-alt me-2'></i>Dashboard</a>
                     <a href='jobs.php' class='nav-item nav-link'><i class='fa fa-briefcase me-2'></i>Jobs</a>
+                    <a href='door_configurator.php' class='nav-item nav-link'><i class='fa fa-door-open me-2'></i>Door Configurator</a>
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <a href='data.php' class='nav-item nav-link'><i class='fa fa-database me-2'></i>Data Management</a>
                     <a href='add_pm.php' class='nav-item nav-link ms-4'>Add Project Manager</a>
                     <a href='add_job.php' class='nav-item nav-link ms-4'>Add Job</a>
+                    <a href='add_door_part.php' class='nav-item nav-link ms-4'>Add Door Part</a>
                     <?php endif; ?>
                 </div>
             </nav>
