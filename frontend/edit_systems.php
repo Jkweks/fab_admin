@@ -11,17 +11,18 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 include 'includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!empty($_POST['new_name'])) {
-        $stmt = $pdo->prepare('INSERT INTO systems (name) VALUES (?) ON CONFLICT (name) DO NOTHING');
-        $stmt->execute([$_POST['new_name']]);
+    if (!empty($_POST['new_name']) && !empty($_POST['manufacturer_id'])) {
+        $stmt = $pdo->prepare('INSERT INTO systems (name, manufacturer_id) VALUES (?, ?)');
+        $stmt->execute([$_POST['new_name'], $_POST['manufacturer_id']]);
     }
-    if (!empty($_POST['id']) && isset($_POST['name'])) {
-        $stmt = $pdo->prepare('UPDATE systems SET name = ? WHERE id = ?');
-        $stmt->execute([$_POST['name'], $_POST['id']]);
+    if (!empty($_POST['id']) && isset($_POST['name']) && !empty($_POST['manufacturer_id'])) {
+        $stmt = $pdo->prepare('UPDATE systems SET name = ?, manufacturer_id = ? WHERE id = ?');
+        $stmt->execute([$_POST['name'], $_POST['manufacturer_id'], $_POST['id']]);
     }
 }
 
-$systems = $pdo->query('SELECT id, name FROM systems ORDER BY name')->fetchAll();
+$manufacturers = $pdo->query('SELECT id, name FROM manufacturers ORDER BY name')->fetchAll();
+$systems = $pdo->query('SELECT systems.id, systems.name, manufacturers.id AS manufacturer_id, manufacturers.name AS manufacturer_name FROM systems JOIN manufacturers ON systems.manufacturer_id = manufacturers.id ORDER BY manufacturers.name, systems.name')->fetchAll();
 ?>
 <?php include 'includes/header.php'; ?>
 <div class='container-xxl position-relative bg-white d-flex p-0'>
@@ -35,16 +36,39 @@ $systems = $pdo->query('SELECT id, name FROM systems ORDER BY name')->fetchAll()
                     <div class='bg-light rounded h-100 p-4'>
                         <h6 class='mb-4'>Edit Systems</h6>
                         <form method='post' class='mb-3'>
-                            <div class='input-group'>
-                                <input type='text' class='form-control' name='new_name' placeholder='New System'>
-                                <button class='btn btn-primary' type='submit'>Add</button>
+                            <div class='row g-2'>
+                                <div class='col'>
+                                    <input type='text' class='form-control' name='new_name' placeholder='New System'>
+                                </div>
+                                <div class='col'>
+                                    <select class='form-select' name='manufacturer_id' required>
+                                        <option value=''>Select Manufacturer</option>
+                                        <?php foreach ($manufacturers as $m): ?>
+                                            <option value='<?php echo htmlspecialchars($m['id']); ?>'><?php echo htmlspecialchars($m['name']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class='col-auto'>
+                                    <button class='btn btn-primary' type='submit'>Add</button>
+                                </div>
                             </div>
                         </form>
                         <?php foreach ($systems as $s): ?>
-                            <form method='post' class='d-flex mb-2'>
+                            <form method='post' class='row g-2 mb-2'>
                                 <input type='hidden' name='id' value='<?php echo htmlspecialchars($s['id']); ?>'>
-                                <input type='text' class='form-control me-2' name='name' value='<?php echo htmlspecialchars($s['name']); ?>'>
-                                <button class='btn btn-secondary' type='submit'>Update</button>
+                                <div class='col'>
+                                    <input type='text' class='form-control' name='name' value='<?php echo htmlspecialchars($s['name']); ?>'>
+                                </div>
+                                <div class='col'>
+                                    <select class='form-select' name='manufacturer_id' required>
+                                        <?php foreach ($manufacturers as $m): ?>
+                                            <option value='<?php echo htmlspecialchars($m['id']); ?>' <?php if ($m['id'] == $s['manufacturer_id']) echo 'selected'; ?>><?php echo htmlspecialchars($m['name']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class='col-auto'>
+                                    <button class='btn btn-secondary' type='submit'>Update</button>
+                                </div>
                             </form>
                         <?php endforeach; ?>
                     </div>

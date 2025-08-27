@@ -48,8 +48,23 @@ CREATE TABLE IF NOT EXISTS manufacturers (
 
 CREATE TABLE IF NOT EXISTS systems (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL
+    name VARCHAR(255) NOT NULL,
+    manufacturer_id INTEGER REFERENCES manufacturers(id) ON DELETE CASCADE,
+    UNIQUE (name, manufacturer_id)
 );
+
+ALTER TABLE systems ADD COLUMN IF NOT EXISTS manufacturer_id INTEGER REFERENCES manufacturers(id) ON DELETE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'systems_name_manufacturer_unique'
+    ) THEN
+        ALTER TABLE systems
+            ADD CONSTRAINT systems_name_manufacturer_unique UNIQUE (name, manufacturer_id);
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS door_parts (
     id SERIAL PRIMARY KEY,

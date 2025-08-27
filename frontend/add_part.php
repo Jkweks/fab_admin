@@ -11,7 +11,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 include 'includes/db.php';
 
 $manufacturers = $pdo->query('SELECT name FROM manufacturers ORDER BY name')->fetchAll();
-$systems = $pdo->query('SELECT name FROM systems ORDER BY name')->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = $_POST['category'];
@@ -68,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <form method='post'>
                             <div class='mb-3'>
                                 <label class='form-label'>Manufacturer</label>
-                                <select class='form-select' name='manufacturer' required>
+                                <select class='form-select' name='manufacturer' id='manufacturer' required>
                                     <option value=''>Select Manufacturer</option>
                                     <?php foreach ($manufacturers as $m): ?>
                                         <option value='<?php echo htmlspecialchars($m['name']); ?>'><?php echo htmlspecialchars($m['name']); ?></option>
@@ -77,16 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class='mb-3'>
                                 <label class='form-label'>System</label>
-                                <select class='form-select' name='system' required>
-                                    <option value=''>Select System</option>
-                                    <?php foreach ($systems as $s): ?>
-                                        <option value='<?php echo htmlspecialchars($s['name']); ?>'><?php echo htmlspecialchars($s['name']); ?></option>
-                                    <?php endforeach; ?>
+                                <select class='form-select' name='system' id='system' required disabled>
+                                    <option value=''>Select Manufacturer First</option>
                                 </select>
-                            </div>
-                            <div class='mb-3'>
-                                <label class='form-label'>Part Number</label>
-                                <input type='text' class='form-control' name='part_number' required>
                             </div>
                             <div class='mb-3'>
                                 <label class='form-label'>Category</label>
@@ -98,6 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </select>
                             </div>
                             <div id='categoryFields'></div>
+                            <div class='mb-3'>
+                                <label class='form-label'>Part Number</label>
+                                <input type='text' class='form-control' name='part_number' required>
+                            </div>
                             <button type='submit' class='btn btn-primary'>Add Part</button>
                         </form>
                         <script>
@@ -109,7 +105,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         document.getElementById('categoryFields').innerHTML = html;
                                     });
                             }
+                            function loadSystems() {
+                                var manufacturer = document.getElementById('manufacturer').value;
+                                var systemSelect = document.getElementById('system');
+                                if (!manufacturer) {
+                                    systemSelect.innerHTML = "<option value=''>Select Manufacturer First</option>";
+                                    systemSelect.disabled = true;
+                                    return;
+                                }
+                                fetch('get_systems.php?manufacturer=' + encodeURIComponent(manufacturer))
+                                    .then(response => response.text())
+                                    .then(html => {
+                                        systemSelect.innerHTML = html;
+                                        systemSelect.disabled = false;
+                                    });
+                            }
+                            document.getElementById('manufacturer').addEventListener('change', loadSystems);
                             document.getElementById('category').addEventListener('change', loadCategoryFields);
+                            loadSystems();
                             loadCategoryFields();
                         </script>
                     </div>

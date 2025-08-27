@@ -11,7 +11,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 include 'includes/db.php';
 
 $manufacturers = $pdo->query('SELECT name FROM manufacturers ORDER BY name')->fetchAll();
-$systems = $pdo->query('SELECT name FROM systems ORDER BY name')->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare('INSERT INTO door_parts (manufacturer, system, part_number, lx, ly, lz, function, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
@@ -54,7 +53,7 @@ $existing_parts = $parts_stmt->fetchAll();
                             <form method='post'>
                                 <div class='mb-3'>
                                     <label class='form-label'>Manufacturer</label>
-                                    <select class='form-select' name='manufacturer' required>
+                                    <select class='form-select' name='manufacturer' id='manufacturer' required>
                                         <option value=''>Select Manufacturer</option>
                                         <?php foreach ($manufacturers as $m): ?>
                                             <option value='<?php echo htmlspecialchars($m['name']); ?>'><?php echo htmlspecialchars($m['name']); ?></option>
@@ -63,11 +62,8 @@ $existing_parts = $parts_stmt->fetchAll();
                                 </div>
                                 <div class='mb-3'>
                                     <label class='form-label'>System</label>
-                                    <select class='form-select' name='system' required>
-                                        <option value=''>Select System</option>
-                                        <?php foreach ($systems as $s): ?>
-                                            <option value='<?php echo htmlspecialchars($s['name']); ?>'><?php echo htmlspecialchars($s['name']); ?></option>
-                                        <?php endforeach; ?>
+                                    <select class='form-select' name='system' id='system' required disabled>
+                                        <option value=''>Select Manufacturer First</option>
                                     </select>
                                 </div>
                                 <div class='mb-3'>
@@ -122,6 +118,24 @@ $existing_parts = $parts_stmt->fetchAll();
                                 <button type='submit' class='btn btn-primary'>Add Part</button>
                             </form>
                             <script>
+                                function loadSystems() {
+                                    var manufacturer = document.getElementById('manufacturer').value;
+                                    var systemSelect = document.getElementById('system');
+                                    if (!manufacturer) {
+                                        systemSelect.innerHTML = "<option value=''>Select Manufacturer First</option>";
+                                        systemSelect.disabled = true;
+                                        return;
+                                    }
+                                    fetch('get_systems.php?manufacturer=' + encodeURIComponent(manufacturer))
+                                        .then(response => response.text())
+                                        .then(html => {
+                                            systemSelect.innerHTML = html;
+                                            systemSelect.disabled = false;
+                                        });
+                                }
+                                document.getElementById('manufacturer').addEventListener('change', loadSystems);
+                                loadSystems();
+
                                 document.getElementById('addRequirement').addEventListener('click', function () {
                                     var container = document.getElementById('requirements');
                                     var template = container.querySelector('.requirement').cloneNode(true);
