@@ -22,8 +22,11 @@ CREATE TABLE IF NOT EXISTS work_orders (
     material_delivery_date DATE,
     pull_from_stock BOOLEAN DEFAULT FALSE,
     delivered BOOLEAN DEFAULT FALSE,
+    status VARCHAR(20) NOT NULL DEFAULT 'draft',
     UNIQUE (job_id, work_order_number)
 );
+
+ALTER TABLE work_orders ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'draft';
 
 CREATE TABLE IF NOT EXISTS work_order_items (
     id SERIAL PRIMARY KEY,
@@ -41,7 +44,9 @@ CREATE TABLE IF NOT EXISTS work_order_items (
 INSERT INTO users (email, password, first_name, last_name, role) VALUES
 ('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin'),
 ('adama@example.com', '$2y$12$MmSdJZgZrqIbXU0cfGWL3OS9IEcGwxfYUIXjPZxCYTiPjsou6Ljce', 'Adam', 'A', 'project_manager'),
-('kevink@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Kevin', 'K', 'fabricator')
+('kevink@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Kevin', 'K', 'fabricator'),
+('jasonj@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Jason', 'J', 'fab_leader'),
+('peted@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Pete', 'D', 'superintendent')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO jobs (job_name, job_number, project_manager) VALUES
