@@ -14,12 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $delivery = !empty($_POST['material_delivery_date']) ? $_POST['material_delivery_date'] : null;
     $pull_from_stock = isset($_POST['pull_from_stock']) ? 1 : 0;
     $delivered = isset($_POST['delivered']) ? 1 : 0;
+    $status = ($_POST['action'] ?? 'draft') === 'submit' ? 'submitted' : 'draft';
     $pdo->beginTransaction();
     $stmt = $pdo->prepare("SELECT COALESCE(MAX(work_order_number),0)+1 FROM work_orders WHERE job_id = ?");
     $stmt->execute([$job_id]);
     $next = $stmt->fetchColumn();
-    $insert = $pdo->prepare("INSERT INTO work_orders (job_id, work_order_number, material_delivery_date, pull_from_stock, delivered) VALUES (?,?,?,?,?) RETURNING id");
-    $insert->execute([$job_id, $next, $delivery, $pull_from_stock, $delivered]);
+    $insert = $pdo->prepare("INSERT INTO work_orders (job_id, work_order_number, material_delivery_date, pull_from_stock, delivered, status) VALUES (?,?,?,?,?,?) RETURNING id");
+    $insert->execute([$job_id, $next, $delivery, $pull_from_stock, $delivered, $status]);
     $wo_id = $insert->fetchColumn();
     if (!empty($_POST['items'])) {
         $item_sql = "INSERT INTO work_order_items (work_order_id, item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by) VALUES (?,?,?,?,?,?,?,?,?)";
@@ -107,8 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                 </div>
                                 <button type='button' class='btn btn-secondary mb-3' id='add-item'>Add Line Item</button>
+                
                                 <div>
-                                    <button type='submit' class='btn btn-primary'>Save</button>
+                                    <button type='submit' name='action' value='draft' class='btn btn-secondary'>Save Draft</button>
+                                    <button type='submit' name='action' value='submit' class='btn btn-primary'>Submit</button>
                                     <a href='jobs.php' class='btn btn-secondary'>Cancel</a>
                                 </div>
                             </form>

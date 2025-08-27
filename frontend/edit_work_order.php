@@ -1,0 +1,181 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: signin.php');
+    exit;
+}
+include 'includes/db.php';
+
+$wo_id = $_GET['id'] ?? $_POST['id'] ?? '';
+if (!$wo_id) {
+    die('Work order required');
+}
+
+$fabricators = $pdo->query("SELECT id, first_name, last_name FROM users WHERE role = 'fabricator' ORDER BY first_name")->fetchAll();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $delivery = !empty($_POST['material_delivery_date']) ? $_POST['material_delivery_date'] : null;
+    $pull_from_stock = isset($_POST['pull_from_stock']) ? 1 : 0;
+    $delivered = isset($_POST['delivered']) ? 1 : 0;
+    $status = ($_POST['action'] ?? 'draft') === 'submit' ? 'submitted' : 'draft';
+
+    $pdo->beginTransaction();
+    $update = $pdo->prepare("UPDATE work_orders SET material_delivery_date=?, pull_from_stock=?, delivered=?, status=? WHERE id=?");
+    $update->execute([$delivery, $pull_from_stock, $delivered, $status, $wo_id]);
+
+    $pdo->prepare("DELETE FROM work_order_items WHERE work_order_id=?")->execute([$wo_id]);
+
+    if (!empty($_POST['items'])) {
+        $item_sql = "INSERT INTO work_order_items (work_order_id, item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by) VALUES (?,?,?,?,?,?,?,?,?)";
+        $item_stmt = $pdo->prepare($item_sql);
+        foreach ($_POST['items'] as $item) {
+            $quantity = isset($item['quantity']) && $item['quantity'] !== '' ? (int)$item['quantity'] : null;
+            $date_required = !empty($item['date_required']) ? $item['date_required'] : null;
+            $date_completed = !empty($item['date_completed']) ? $item['date_completed'] : null;
+            $completed_by = isset($item['completed_by']) && $item['completed_by'] !== '' ? (int)$item['completed_by'] : null;
+
+            $item_stmt->execute([
+                $wo_id,
+                $item['item_type'] ?? '',
+                $item['elevation'] ?? '',
+                $quantity,
+                $item['scope'] ?? '',
+                $item['comments'] ?? '',
+                $date_required,
+                $date_completed,
+                $completed_by,
+            ]);
+        }
+    }
+
+    $pdo->commit();
+    header('Location: jobs.php');
+    exit;
+}
+
+$stmt = $pdo->prepare("SELECT job_id, material_delivery_date, pull_from_stock, delivered, status FROM work_orders WHERE id=?");
+$stmt->execute([$wo_id]);
+$work_order = $stmt->fetch();
+if (!$work_order) {
+    die('Work order not found');
+}
+
+$item_stmt = $pdo->prepare("SELECT item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by FROM work_order_items WHERE work_order_id=? ORDER BY id");
+$item_stmt->execute([$wo_id]);
+$items = $item_stmt->fetchAll();
+?>
+<?php include 'includes/header.php'; ?>
+<div class='container-xxl position-relative bg-white d-flex p-0'>
+    <?php include 'includes/spinner.php'; ?>
+    <?php include 'includes/sidebar.php'; ?>
+    <div class='content'>
+        <?php include 'includes/navbar.php'; ?>
+        <div class='container-fluid pt-4 px-4'>
+            <div class='row g-4'>
+                <div class='col-12'>
+                    <div class='bg-light rounded h-100 p-4'>
+                        <h6 class='mb-4'>Edit Work Order</h6>
+                        <form method='post'>
+                            <input type='hidden' name='id' value='<?php echo htmlspecialchars($wo_id); ?>'>
+                            <div class='mb-3'>
+                                <label class='form-label'>Material Delivery Date</label>
+                                <input type='date' name='material_delivery_date' class='form-control' value='<?php echo htmlspecialchars($work_order['material_delivery_date'] ?? ''); ?>'>
+                                <div class='form-check'>
+                                    <input class='form-check-input' type='checkbox' name='pull_from_stock' id='pull_from_stock' <?php if ($work_order['pull_from_stock']) echo 'checked'; ?>>
+                                    <label class='form-check-label' for='pull_from_stock'>Pull from stock</label>
+                                </div>
+                                <div class='form-check'>
+                                    <input class='form-check-input' type='checkbox' name='delivered' id='delivered' <?php if ($work_order['delivered']) echo 'checked'; ?>>
+                                    <label class='form-check-label' for='delivered'>Delivered</label>
+                                </div>
+                            </div>
+                            <div id='items-container'>
+                                <h6>Line Items</h6>
+                                <?php foreach ($items as $index => $it): ?>
+                                <div class='row g-2 mb-3 item-row'>
+                                    <div class='col-md-2'>
+                                        <select name='items[<?php echo $index; ?>][item_type]' class='form-select'>
+                                            <option value='Curtainwall' <?php if ($it['item_type']==='Curtainwall') echo 'selected'; ?>>Curtainwall</option>
+                                            <option value='Storefront' <?php if ($it['item_type']==='Storefront') echo 'selected'; ?>>Storefront</option>
+                                            <option value='Doors' <?php if ($it['item_type']==='Doors') echo 'selected'; ?>>Doors</option>
+                                            <option value='Window wall' <?php if ($it['item_type']==='Window wall') echo 'selected'; ?>>Window wall</option>
+                                        </select>
+                                    </div>
+                                    <div class='col-md-2'><input type='text' name='items[<?php echo $index; ?>][elevation]' class='form-control' placeholder='Elevation' value='<?php echo htmlspecialchars($it['elevation'] ?? ''); ?>'></div>
+                                    <div class='col-md-1'><input type='number' name='items[<?php echo $index; ?>][quantity]' class='form-control' placeholder='Qty' value='<?php echo htmlspecialchars($it['quantity'] ?? ''); ?>'></div>
+                                    <div class='col-md-2'>
+                                        <select name='items[<?php echo $index; ?>][scope]' class='form-select'>
+                                            <option value='assemble' <?php if ($it['scope']==='assemble') echo 'selected'; ?>>Assemble</option>
+                                            <option value='kit' <?php if ($it['scope']==='kit') echo 'selected'; ?>>Kit</option>
+                                            <option value='hardware' <?php if ($it['scope']==='hardware') echo 'selected'; ?>>Hardware</option>
+                                        </select>
+                                    </div>
+                                    <div class='col-md-2'><input type='text' name='items[<?php echo $index; ?>][comments]' class='form-control' placeholder='Comments' value='<?php echo htmlspecialchars($it['comments'] ?? ''); ?>'></div>
+                                    <div class='col-md-1'><input type='date' name='items[<?php echo $index; ?>][date_required]' class='form-control' value='<?php echo htmlspecialchars($it['date_required'] ?? ''); ?>'></div>
+                                    <div class='col-md-1'><input type='date' name='items[<?php echo $index; ?>][date_completed]' class='form-control' value='<?php echo htmlspecialchars($it['date_completed'] ?? ''); ?>'></div>
+                                    <div class='col-md-1'>
+                                        <select name='items[<?php echo $index; ?>][completed_by]' class='form-select'>
+                                            <option value=''>--</option>
+                                            <?php foreach ($fabricators as $fab): ?>
+                                                <option value='<?php echo htmlspecialchars($fab['id']); ?>' <?php if ($it['completed_by']==$fab['id']) echo 'selected'; ?>><?php echo htmlspecialchars($fab['first_name'] . ' ' . $fab['last_name']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button type='button' class='btn btn-secondary mb-3' id='add-item'>Add Line Item</button>
+
+                            <div>
+                                <button type='submit' name='action' value='draft' class='btn btn-secondary'>Save Draft</button>
+                                <button type='submit' name='action' value='submit' class='btn btn-primary'>Submit</button>
+                                <a href='jobs.php' class='btn btn-secondary'>Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href='#' class='btn btn-lg btn-primary btn-lg-square back-to-top'><i class='bi bi-arrow-up'></i></a>
+</div>
+<script>
+document.getElementById('add-item').addEventListener('click', function() {
+    var container = document.getElementById('items-container');
+    var index = container.querySelectorAll('.item-row').length;
+    var row = document.createElement('div');
+    row.className = 'row g-2 mb-3 item-row';
+    row.innerHTML = `
+        <div class="col-md-2">
+            <select name="items[${index}][item_type]" class="form-select">
+                <option value="Curtainwall">Curtainwall</option>
+                <option value="Storefront">Storefront</option>
+                <option value="Doors">Doors</option>
+                <option value="Window wall">Window wall</option>
+            </select>
+        </div>
+        <div class="col-md-2"><input type="text" name="items[${index}][elevation]" class="form-control" placeholder="Elevation"></div>
+        <div class="col-md-1"><input type="number" name="items[${index}][quantity]" class="form-control" placeholder="Qty"></div>
+        <div class="col-md-2">
+            <select name="items[${index}][scope]" class="form-select">
+                <option value="assemble">Assemble</option>
+                <option value="kit">Kit</option>
+                <option value="hardware">Hardware</option>
+            </select>
+        </div>
+        <div class="col-md-2"><input type="text" name="items[${index}][comments]" class="form-control" placeholder="Comments"></div>
+        <div class="col-md-1"><input type="date" name="items[${index}][date_required]" class="form-control"></div>
+        <div class="col-md-1"><input type="date" name="items[${index}][date_completed]" class="form-control"></div>
+        <div class="col-md-1">
+            <select name="items[${index}][completed_by]" class="form-select">
+                <option value="">--</option>
+                <?php foreach ($fabricators as $fab): ?>
+                    <option value="<?php echo htmlspecialchars($fab['id']); ?>"><?php echo htmlspecialchars($fab['first_name'] . ' ' . $fab['last_name']); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>`;
+    container.appendChild(row);
+});
+</script>
+<?php include 'includes/footer.php'; ?>
+
