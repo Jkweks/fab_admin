@@ -23,7 +23,7 @@ foreach ($work_orders as $wo) {
     } elseif ($wo['material_delivery_date']) {
         echo '<p>Material Delivery: ' . htmlspecialchars($wo['material_delivery_date']) . '</p>';
     }
-    // Explicitly order by the work_order_items table to avoid ambiguous column errors
+
     $item_stmt = $pdo->prepare("SELECT item_type, elevation, quantity, scope, comments, date_required, date_completed, CONCAT(u.first_name, ' ', u.last_name) AS completed_by_name FROM work_order_items LEFT JOIN users u ON work_order_items.completed_by = u.id WHERE work_order_id = ? ORDER BY work_order_items.id");
     $item_stmt->execute([$wo['id']]);
     $items = $item_stmt->fetchAll();
