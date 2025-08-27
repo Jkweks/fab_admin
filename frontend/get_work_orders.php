@@ -15,13 +15,13 @@ $wo_stmt->execute([$job_id]);
 $work_orders = $wo_stmt->fetchAll();
 foreach ($work_orders as $wo) {
     echo "<div class='mb-3'>";
-    echo "<h6>Work Order " . htmlspecialchars($wo['work_order_number']) . "</h6>";
+    echo "<h6>Work Order " . htmlspecialchars($wo['work_order_number'] ?? '') . "</h6>";
     if ($wo['pull_from_stock']) {
         echo '<p>Pull from stock</p>';
     } elseif ($wo['delivered']) {
         echo '<p>Delivered</p>';
     } elseif ($wo['material_delivery_date']) {
-        echo '<p>Material Delivery: ' . htmlspecialchars($wo['material_delivery_date']) . '</p>';
+        echo '<p>Material Delivery: ' . htmlspecialchars($wo['material_delivery_date'] ?? '') . '</p>';
     }
 
     $item_stmt = $pdo->prepare("SELECT item_type, elevation, quantity, scope, comments, date_required, date_completed, CONCAT(u.first_name, ' ', u.last_name) AS completed_by_name FROM work_order_items LEFT JOIN users u ON work_order_items.completed_by = u.id WHERE work_order_id = ? ORDER BY work_order_items.id");
@@ -31,14 +31,14 @@ foreach ($work_orders as $wo) {
         echo "<table class='table'><thead><tr><th>Type</th><th>Elevation</th><th>Qty</th><th>Scope</th><th>Comments</th><th>Date Required</th><th>Date Completed</th><th>Completed By</th></tr></thead><tbody>";
         foreach ($items as $it) {
             echo '<tr>';
-            echo '<td>' . htmlspecialchars($it['item_type']) . '</td>';
-            echo '<td>' . htmlspecialchars($it['elevation']) . '</td>';
-            echo '<td>' . htmlspecialchars($it['quantity']) . '</td>';
-            echo '<td>' . htmlspecialchars($it['scope']) . '</td>';
-            echo '<td>' . htmlspecialchars($it['comments']) . '</td>';
-            echo '<td>' . htmlspecialchars($it['date_required']) . '</td>';
-            echo '<td>' . htmlspecialchars($it['date_completed']) . '</td>';
-            echo '<td>' . htmlspecialchars($it['completed_by_name']) . '</td>';
+            echo '<td>' . htmlspecialchars($it['item_type'] ?? '') . '</td>';
+            echo '<td>' . htmlspecialchars($it['elevation'] ?? '') . '</td>';
+            echo '<td>' . htmlspecialchars($it['quantity'] ?? '') . '</td>';
+            echo '<td>' . htmlspecialchars($it['scope'] ?? '') . '</td>';
+            echo '<td>' . htmlspecialchars($it['comments'] ?? '') . '</td>';
+            echo '<td>' . htmlspecialchars($it['date_required'] ?? '') . '</td>';
+            echo '<td>' . htmlspecialchars($it['date_completed'] ?? '') . '</td>';
+            echo '<td>' . htmlspecialchars($it['completed_by_name'] ?? '') . '</td>';
             echo '</tr>';
         }
         echo '</tbody></table>';
