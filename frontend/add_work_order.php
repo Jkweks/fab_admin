@@ -25,16 +25,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $item_sql = "INSERT INTO work_order_items (work_order_id, item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by) VALUES (?,?,?,?,?,?,?,?,?)";
         $item_stmt = $pdo->prepare($item_sql);
         foreach ($_POST['items'] as $item) {
+            $quantity = isset($item['quantity']) && $item['quantity'] !== '' ? (int)$item['quantity'] : null;
+            $date_required = !empty($item['date_required']) ? $item['date_required'] : null;
+            $date_completed = !empty($item['date_completed']) ? $item['date_completed'] : null;
+            $completed_by = isset($item['completed_by']) && $item['completed_by'] !== '' ? (int)$item['completed_by'] : null;
+
             $item_stmt->execute([
                 $wo_id,
                 $item['item_type'] ?? '',
-                $item['elevation'] ?? '',
+                $item['elevation'] ?? '',         
                 $item['quantity'] ?? null,
                 $item['scope'] ?? '',
                 $item['comments'] ?? '',
                 $item['date_required'] ?? null,
                 $item['date_completed'] ?? null,
-                $item['completed_by'] ?? null
+
             ]);
         }
     }
