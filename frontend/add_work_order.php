@@ -33,13 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $item_stmt->execute([
                 $wo_id,
                 $item['item_type'] ?? '',
-                $item['elevation'] ?? '',         
-                $item['quantity'] ?? null,
+                $item['elevation'] ?? '',
+                $quantity,
                 $item['scope'] ?? '',
                 $item['comments'] ?? '',
-                $item['date_required'] ?? null,
-                $item['date_completed'] ?? null,
-
+                $date_required,
+                $date_completed,
+                $completed_by,
             ]);
         }
     }
