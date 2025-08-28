@@ -50,6 +50,7 @@ foreach ($work_orders as $wo) {
     echo "<a href='delete_work_order.php?id=" . urlencode($wo['id']) . "' class='btn btn-sm btn-danger' onclick=\"return confirm('Delete work order?');\">Delete</a>";
     echo '</div>';
 }
-echo "<a href='add_work_order.php?job_id=" . urlencode($job_id) . "' class='btn btn-primary'>Add Work Order</a>";
+echo "<a href='add_work_order.php?job_id=" . urlencode($job_id) . "' class='btn btn-primary me-2'>Add Work Order</a>";
+echo "<a href='door_configurations_by_job.php?job_id=" . urlencode($job_id) . "' class='btn btn-secondary'>Door Configurations</a>";
 ?>
 
