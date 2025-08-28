@@ -33,10 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['bottom_rail_2'] !== '' ? $_POST['bottom_rail_2'] : null
     ]);
 }
-$hinge_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$lock_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$top_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'top_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'bottom_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$hinge_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$lock_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$top_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'top_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'bottom_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 ?>
 <?php include 'includes/header.php'; ?>
 <div class='container-xxl position-relative bg-white d-flex p-0'>
@@ -139,7 +139,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                         <select class='form-select' name='hinge_rail'>
                                             <option value=''>Select Hinge Rail</option>
                                             <?php foreach ($hinge_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -148,7 +148,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                         <select class='form-select' name='lock_rail'>
                                             <option value=''>Select Lock Rail</option>
                                             <?php foreach ($lock_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -157,7 +157,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                         <select class='form-select' name='top_rail'>
                                             <option value=''>Select Top Rail</option>
                                             <?php foreach ($top_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -166,7 +166,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                         <select class='form-select' name='bottom_rail'>
                                             <option value=''>Select Bottom Rail</option>
                                             <?php foreach ($bottom_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -177,7 +177,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                             <select class='form-select' name='hinge_rail_2'>
                                                 <option value=''>Select Hinge Rail</option>
                                                 <?php foreach ($hinge_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -186,7 +186,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                             <select class='form-select' name='lock_rail_2'>
                                                 <option value=''>Select Lock Rail</option>
                                                 <?php foreach ($lock_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -195,7 +195,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                             <select class='form-select' name='top_rail_2'>
                                                 <option value=''>Select Top Rail</option>
                                                 <?php foreach ($top_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -204,7 +204,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                             <select class='form-select' name='bottom_rail_2'>
                                                 <option value=''>Select Bottom Rail</option>
                                                 <?php foreach ($bottom_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -371,7 +371,11 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
     var bottomGap = parseFloat(document.getElementById('bottom_gap').value) || 0;
     var hingeGap = parseFloat(document.getElementById('hinge_gap').value) || 0;
     var latchGap = parseFloat(document.getElementById('latch_gap').value) || 0;
-    var railCut = width - hingeGap - latchGap;
+    var hingeSelect = document.querySelector("select[name='hinge_rail']");
+    var lockSelect = document.querySelector("select[name='lock_rail']");
+    var hingeLz = parseFloat(hingeSelect.options[hingeSelect.selectedIndex].dataset.lz || 0) || 0;
+    var lockLz = parseFloat(lockSelect.options[lockSelect.selectedIndex].dataset.lz || 0) || 0;
+    var railCut = width - hingeGap - latchGap - hingeLz - lockLz;
     var stileCut = height - topGap - bottomGap;
     var body = document.getElementById('cutlist-body');
     body.innerHTML = '';
@@ -383,10 +387,17 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
         body.innerHTML += '<tr><td>Hinge Rail</td><td>' + stileCut.toFixed(3) + '</td></tr>';
         body.innerHTML += '<tr><td>Lock Rail</td><td>' + stileCut.toFixed(3) + '</td></tr>';
         if (document.getElementById('second_leaf').style.display === 'block') {
+            var hingeSelect2 = document.querySelector("select[name='hinge_rail_2']");
+            var lockSelect2 = document.querySelector("select[name='lock_rail_2']");
+            var hingeLz2 = parseFloat(hingeSelect2.options[hingeSelect2.selectedIndex].dataset.lz || 0) || 0;
+            var lockLz2 = parseFloat(lockSelect2.options[lockSelect2.selectedIndex].dataset.lz || 0) || 0;
+            var railCut2 = width - hingeGap - latchGap - hingeLz2 - lockLz2;
             body.innerHTML += '<tr><td>Second Hinge Rail</td><td>' + stileCut.toFixed(3) + '</td></tr>';
             body.innerHTML += '<tr><td>Second Lock Rail</td><td>' + stileCut.toFixed(3) + '</td></tr>';
-            body.innerHTML += '<tr><td>Second Top Rail</td><td>' + railCut.toFixed(3) + '</td></tr>';
-            body.innerHTML += '<tr><td>Second Bottom Rail</td><td>' + railCut.toFixed(3) + '</td></tr>';
+            if (!isNaN(railCut2)) {
+                body.innerHTML += '<tr><td>Second Top Rail</td><td>' + railCut2.toFixed(3) + '</td></tr>';
+                body.innerHTML += '<tr><td>Second Bottom Rail</td><td>' + railCut2.toFixed(3) + '</td></tr>';
+            }
         }
     }
 });
