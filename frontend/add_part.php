@@ -11,6 +11,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 include 'includes/db.php';
 
 $manufacturers = $pdo->query('SELECT name FROM manufacturers ORDER BY name')->fetchAll();
+$parts_stmt = $pdo->query('SELECT id, manufacturer, system, part_number FROM door_parts ORDER BY manufacturer, system, part_number');
+$existing_parts = $parts_stmt->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = $_POST['category'];
@@ -51,6 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $function,
         $category
     ]);
+
+    $part_id = $pdo->lastInsertId();
+    if (!empty($_POST['required_parts'])) {
+        $req_stmt = $pdo->prepare('INSERT INTO door_part_requirements (part_id, required_part_id, quantity) VALUES (?, ?, ?)');
+        foreach ($_POST['required_parts'] as $index => $req) {
+            if ($req !== '') {
+                $qty = isset($_POST['required_quantities'][$index]) && $_POST['required_quantities'][$index] !== '' ? $_POST['required_quantities'][$index] : 1;
+                $req_stmt->execute([$part_id, $req, $qty]);
+            }
+        }
+    }
 }
 ?>
 <?php include 'includes/header.php'; ?>
@@ -94,6 +107,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label class='form-label'>Part Number</label>
                                 <input type='text' class='form-control' name='part_number' required>
                             </div>
+                            <div class='mb-3'>
+                                <label class='form-label'>Requirements</label>
+                                <div id='requirements'>
+                                    <div class='requirement d-flex mb-2'>
+                                        <select class='form-select me-2' name='required_parts[]'>
+                                            <option value=''>Select Required Part</option>
+                                            <?php foreach ($existing_parts as $part): ?>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <input type='number' class='form-control' name='required_quantities[]' min='1' value='1'>
+                                    </div>
+                                </div>
+                                <button type='button' class='btn btn-sm btn-secondary' id='addRequirement'>Add Requirement</button>
+                            </div>
                             <button type='submit' class='btn btn-primary'>Add Part</button>
                         </form>
                         <script>
@@ -120,6 +148,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         systemSelect.disabled = false;
                                     });
                             }
+                            document.getElementById('addRequirement').addEventListener('click', function () {
+                                var container = document.getElementById('requirements');
+                                var template = container.querySelector('.requirement').cloneNode(true);
+                                template.querySelector('select').selectedIndex = 0;
+                                template.querySelector('input').value = 1;
+                                container.appendChild(template);
+                            });
                             document.getElementById('manufacturer').addEventListener('change', loadSystems);
                             document.getElementById('category').addEventListener('change', loadCategoryFields);
                             loadSystems();
