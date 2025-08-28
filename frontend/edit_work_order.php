@@ -12,12 +12,22 @@ if (!$wo_id) {
 }
 
 $fabricators = $pdo->query("SELECT id, first_name, last_name FROM users WHERE role = 'fabricator' ORDER BY first_name")->fetchAll();
+$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $delivery = !empty($_POST['material_delivery_date']) ? $_POST['material_delivery_date'] : null;
     $pull_from_stock = isset($_POST['pull_from_stock']) ? 1 : 0;
     $delivered = isset($_POST['delivered']) ? 1 : 0;
     $status = ($_POST['action'] ?? 'draft') === 'submit' ? 'submitted' : 'draft';
+    $error = '';
+    if (($_POST['action'] ?? 'draft') === 'submit') {
+        $check = $pdo->prepare("SELECT 1 FROM door_configurations WHERE work_order_id=?");
+        $check->execute([$wo_id]);
+        if (!$check->fetch()) {
+            $error = 'Door configuration required before submission.';
+            $status = 'draft';
+        }
+    }
 
     $pdo->beginTransaction();
     $update = $pdo->prepare("UPDATE work_orders SET material_delivery_date=?, pull_from_stock=?, delivered=?, status=? WHERE id=?");
@@ -49,8 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $pdo->commit();
-    header('Location: jobs.php');
-    exit;
+    if (!$error) {
+        header('Location: jobs.php');
+        exit;
+    }
 }
 
 $stmt = $pdo->prepare("SELECT job_id, material_delivery_date, pull_from_stock, delivered, status FROM work_orders WHERE id=?");
@@ -75,6 +87,9 @@ $items = $item_stmt->fetchAll();
                 <div class='col-12'>
                     <div class='bg-light rounded h-100 p-4'>
                         <h6 class='mb-4'>Edit Work Order</h6>
+                        <?php if (!empty($error)): ?>
+                            <div class='alert alert-danger'><?php echo htmlspecialchars($error); ?></div>
+                        <?php endif; ?>
                         <form method='post'>
                             <input type='hidden' name='id' value='<?php echo htmlspecialchars($wo_id); ?>'>
                             <div class='mb-3'>

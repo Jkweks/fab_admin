@@ -112,6 +112,15 @@ ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS opening_width NUMERIC;
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS opening_height NUMERIC;
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS frame_height NUMERIC;
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS glazing_thickness VARCHAR(10);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS top_gap NUMERIC;
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS bottom_gap NUMERIC;
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_gap NUMERIC;
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS latch_gap NUMERIC;
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS handing VARCHAR(20);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_rail_2_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS lock_rail_2_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS top_rail_2_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS bottom_rail_2_id INTEGER REFERENCES door_parts(id);
 
 INSERT INTO users (email, password, first_name, last_name, role) VALUES
 ('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin'),

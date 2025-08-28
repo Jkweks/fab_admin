@@ -10,6 +10,17 @@
                     <input class="form-control border-0" type="search" placeholder="Search">
                 </form>
                 <div class="navbar-nav align-items-center ms-auto">
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <form method="post" action="switch_role.php" class="me-3">
+                        <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="admin" <?php if ($_SESSION['role']==='admin') echo 'selected';?>>Admin</option>
+                            <option value="project_manager" <?php if ($_SESSION['role']==='project_manager') echo 'selected';?>>Project Manager</option>
+                            <option value="fabricator" <?php if ($_SESSION['role']==='fabricator') echo 'selected';?>>Fabricator</option>
+                            <option value="fab_leader" <?php if ($_SESSION['role']==='fab_leader') echo 'selected';?>>Fab Leader</option>
+                            <option value="superintendent" <?php if ($_SESSION['role']==='superintendent') echo 'selected';?>>Superintendent</option>
+                        </select>
+                    </form>
+                    <?php endif; ?>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <i class="fa fa-envelope me-lg-2"></i>
