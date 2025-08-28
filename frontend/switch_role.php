@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: signin.php');
     exit;
 }
-if ($_SESSION['role'] !== 'admin') {
+if (($_SESSION['role'] ?? '') !== 'admin' && empty($_SESSION['is_dev'])) {
     header('Location: index.php');
     exit;
 }

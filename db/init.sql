@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
 ALTER TABLE users ADD COLUMN IF NOT EXISTS first_name VARCHAR(255);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_name VARCHAR(255);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) NOT NULL DEFAULT 'user';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_dev BOOLEAN NOT NULL DEFAULT FALSE;
 
 CREATE TABLE IF NOT EXISTS jobs (
     id SERIAL PRIMARY KEY,
@@ -122,12 +123,12 @@ ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS lock_rail_2_id INTEGER 
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS top_rail_2_id INTEGER REFERENCES door_parts(id);
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS bottom_rail_2_id INTEGER REFERENCES door_parts(id);
 
-INSERT INTO users (email, password, first_name, last_name, role) VALUES
-('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin'),
-('adama@example.com', '$2y$12$MmSdJZgZrqIbXU0cfGWL3OS9IEcGwxfYUIXjPZxCYTiPjsou6Ljce', 'Adam', 'A', 'project_manager'),
-('kevink@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Kevin', 'K', 'fabricator'),
-('jasonj@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Jason', 'J', 'fab_leader'),
-('peted@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Pete', 'D', 'superintendent')
+INSERT INTO users (email, password, first_name, last_name, role, is_dev) VALUES
+('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin', TRUE),
+('adama@example.com', '$2y$12$MmSdJZgZrqIbXU0cfGWL3OS9IEcGwxfYUIXjPZxCYTiPjsou6Ljce', 'Adam', 'A', 'project_manager', FALSE),
+('kevink@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Kevin', 'K', 'fabricator', FALSE),
+('jasonj@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Jason', 'J', 'fab_leader', FALSE),
+('peted@example.com', '$2y$10$w1WAnbcWcCYwiVdc0GqORu0Yv7FpC18m0tHbdD.N14Q6gttYVOlBm', 'Pete', 'D', 'superintendent', FALSE)
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO jobs (job_name, job_number, project_manager) VALUES
