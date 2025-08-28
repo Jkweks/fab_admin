@@ -23,6 +23,7 @@
                     <a href='add_pm.php' class='nav-item nav-link ms-4'>Add Project Manager</a>
                     <a href='add_job.php' class='nav-item nav-link ms-4'>Add Job</a>
                     <a href='add_part.php' class='nav-item nav-link ms-4'>Add Part</a>
+                    <a href='parts_library.php' class='nav-item nav-link ms-4'>Parts Library</a>
                     <a href='edit_manufacturers.php' class='nav-item nav-link ms-4'>Edit Manufacturers</a>
                     <a href='edit_systems.php' class='nav-item nav-link ms-4'>Edit Systems</a>
                     <?php endif; ?>
