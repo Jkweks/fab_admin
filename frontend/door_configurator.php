@@ -17,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 }
 
-$hinge_parts = $pdo->query("SELECT id, manufacturer, system, part_number FROM door_parts WHERE function = 'hinge_rail' ORDER BY manufacturer, system, part_number")->fetchAll();
-$lock_parts = $pdo->query("SELECT id, manufacturer, system, part_number FROM door_parts WHERE function = 'lock_rail' ORDER BY manufacturer, system, part_number")->fetchAll();
-$top_parts = $pdo->query("SELECT id, manufacturer, system, part_number FROM door_parts WHERE function = 'top_rail' ORDER BY manufacturer, system, part_number")->fetchAll();
-$bottom_parts = $pdo->query("SELECT id, manufacturer, system, part_number FROM door_parts WHERE function = 'bottom_rail' ORDER BY manufacturer, system, part_number")->fetchAll();
+$hinge_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$lock_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$top_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'top_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'bottom_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 ?>
 <?php include 'includes/header.php'; ?>
     <div class='container-xxl position-relative bg-white d-flex p-0'>

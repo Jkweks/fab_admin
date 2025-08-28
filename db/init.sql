@@ -78,6 +78,12 @@ CREATE TABLE IF NOT EXISTS door_parts (
     category VARCHAR(50) NOT NULL DEFAULT 'door'
 );
 
+CREATE TABLE IF NOT EXISTS door_part_functions (
+    part_id INTEGER REFERENCES door_parts(id) ON DELETE CASCADE,
+    function VARCHAR(50) NOT NULL,
+    PRIMARY KEY (part_id, function)
+);
+
 CREATE TABLE IF NOT EXISTS door_part_requirements (
     id SERIAL PRIMARY KEY,
     part_id INTEGER REFERENCES door_parts(id) ON DELETE CASCADE,
