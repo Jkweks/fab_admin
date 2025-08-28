@@ -111,7 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                                 <div>
                                     <button type='submit' name='action' value='draft' class='btn btn-secondary'>Save Draft</button>
-                                    <button type='submit' name='action' value='submit' class='btn btn-primary'>Submit</button>
                                     <a href='jobs.php' class='btn btn-secondary'>Cancel</a>
                                 </div>
                             </form>
