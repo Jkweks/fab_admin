@@ -10,7 +10,7 @@
                     <input class="form-control border-0" type="search" placeholder="Search">
                 </form>
                 <div class="navbar-nav align-items-center ms-auto">
-                    <?php if (($_SESSION['role'] ?? '') === 'admin' || (!empty($_SESSION['is_dev']) && $_SESSION['is_dev'])): ?>
+                    <?php if (($_SESSION['original_role'] ?? '') === 'admin' || (!empty($_SESSION['is_dev']) && $_SESSION['is_dev'])): ?>
                     <form method="post" action="switch_role.php" class="me-3">
                         <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
                             <option value="admin" <?php if ($_SESSION['role']==='admin') echo 'selected';?>>Admin</option>
