@@ -34,8 +34,8 @@ $parts = $pdo->query("SELECT id, manufacturer, system, part_number, category FRO
                             </thead>
                             <tbody>
                                 <?php foreach ($parts as $part): ?>
-                                    <tr>
-                                        <td><a href='add_part.php?id=<?php echo $part['id']; ?>'><?php echo htmlspecialchars($part['manufacturer']); ?></a></td>
+                                    <tr onclick="window.location='add_part.php?id=<?php echo $part['id']; ?>'" style='cursor:pointer;'>
+                                        <td><?php echo htmlspecialchars($part['manufacturer']); ?></td>
                                         <td><?php echo htmlspecialchars($part['system']); ?></td>
                                         <td><?php echo htmlspecialchars($part['part_number']); ?></td>
                                         <td><?php echo htmlspecialchars($part['category']); ?></td>

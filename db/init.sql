@@ -93,12 +93,25 @@ CREATE TABLE IF NOT EXISTS door_part_requirements (
 
 CREATE TABLE IF NOT EXISTS door_configurations (
     id SERIAL PRIMARY KEY,
+    work_order_id INTEGER REFERENCES work_orders(id),
     name VARCHAR(255),
+    has_transom BOOLEAN DEFAULT FALSE,
+    opening_width NUMERIC,
+    opening_height NUMERIC,
+    frame_height NUMERIC,
+    glazing_thickness VARCHAR(10),
     hinge_rail_id INTEGER REFERENCES door_parts(id),
     lock_rail_id INTEGER REFERENCES door_parts(id),
     top_rail_id INTEGER REFERENCES door_parts(id),
     bottom_rail_id INTEGER REFERENCES door_parts(id)
 );
+
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS work_order_id INTEGER REFERENCES work_orders(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS has_transom BOOLEAN DEFAULT FALSE;
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS opening_width NUMERIC;
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS opening_height NUMERIC;
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS frame_height NUMERIC;
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS glazing_thickness VARCHAR(10);
 
 INSERT INTO users (email, password, first_name, last_name, role) VALUES
 ('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin'),
