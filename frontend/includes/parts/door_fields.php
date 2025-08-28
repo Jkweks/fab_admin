@@ -12,7 +12,7 @@
 </div>
 <div class='mb-3'>
     <label class='form-label'>Function</label>
-    <select class='form-select' name='function' required>
+    <select class='form-select' name='functions[]' multiple required>
         <option value='hinge_rail'>Hinge Rail</option>
         <option value='lock_rail'>Lock Rail</option>
         <option value='top_rail'>Top Rail</option>

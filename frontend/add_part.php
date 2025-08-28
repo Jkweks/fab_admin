@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = $_POST['category'];
     $lx = $ly = $lz = null;
     $function = null;
+    $functions = [];
 
     switch ($category) {
         case 'frame':
@@ -35,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lx = $_POST['lx'] !== '' ? $_POST['lx'] : null;
             $ly = $_POST['ly'] !== '' ? $_POST['ly'] : null;
             $lz = $_POST['lz'] !== '' ? $_POST['lz'] : null;
-            $function = $_POST['function'] ?? 'door';
+            $functions = isset($_POST['functions']) ? $_POST['functions'] : [];
+            $function = $functions[0] ?? 'door';
             break;
         case 'accessory':
             $function = 'accessory';
@@ -55,6 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 
     $part_id = $pdo->lastInsertId();
+    if (!empty($functions)) {
+        $func_stmt = $pdo->prepare('INSERT INTO door_part_functions (part_id, function) VALUES (?, ?)');
+        foreach ($functions as $func) {
+            $func_stmt->execute([$part_id, $func]);
+        }
+    }
     if (!empty($_POST['required_parts'])) {
         $req_stmt = $pdo->prepare('INSERT INTO door_part_requirements (part_id, required_part_id, quantity) VALUES (?, ?, ?)');
         foreach ($_POST['required_parts'] as $index => $req) {
