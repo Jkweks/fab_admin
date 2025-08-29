@@ -28,6 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $status = 'draft';
         }
     }
+    $existing_stmt = $pdo->prepare("SELECT id FROM door_configurations WHERE work_order_id=?");
+    $existing_stmt->execute([$wo_id]);
+    $existing_configs = $existing_stmt->fetchAll(PDO::FETCH_COLUMN);
+    $used_configs = [];
 
     $pdo->beginTransaction();
     $update = $pdo->prepare("UPDATE work_orders SET material_delivery_date=?, pull_from_stock=?, delivered=?, status=? WHERE id=?");
@@ -36,13 +40,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdo->prepare("DELETE FROM work_order_items WHERE work_order_id=?")->execute([$wo_id]);
 
     if (!empty($_POST['items'])) {
-        $item_sql = "INSERT INTO work_order_items (work_order_id, item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by) VALUES (?,?,?,?,?,?,?,?,?)";
+        $item_sql = "INSERT INTO work_order_items (work_order_id, item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by, door_configuration_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
         $item_stmt = $pdo->prepare($item_sql);
-        foreach ($_POST['items'] as $item) {
+        foreach ($_POST['items'] as $index => $item) {
             $quantity = isset($item['quantity']) && $item['quantity'] !== '' ? (int)$item['quantity'] : null;
             $date_required = !empty($item['date_required']) ? $item['date_required'] : null;
             $date_completed = !empty($item['date_completed']) ? $item['date_completed'] : null;
             $completed_by = isset($item['completed_by']) && $item['completed_by'] !== '' ? (int)$item['completed_by'] : null;
+
+            $door_config_id = isset($item['door_config_id']) && $item['door_config_id'] !== '' ? (int)$item['door_config_id'] : null;
+            if (($item['item_type'] ?? '') === 'Doors') {
+                if (!$door_config_id) {
+                    $name = !empty($item['elevation']) ? $item['elevation'] : 'Door ' . ($index + 1);
+                    $dc_stmt = $pdo->prepare("INSERT INTO door_configurations (work_order_id, name) VALUES (?,?) RETURNING id");
+                    $dc_stmt->execute([$wo_id, $name]);
+                    $door_config_id = $dc_stmt->fetchColumn();
+                }
+                $used_configs[] = $door_config_id;
+            }
 
             $item_stmt->execute([
                 $wo_id,
@@ -54,7 +69,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $date_required,
                 $date_completed,
                 $completed_by,
+                $door_config_id,
             ]);
+        }
+    }
+
+    if ($existing_configs) {
+        $to_delete = array_diff($existing_configs, $used_configs);
+        if ($to_delete) {
+            $placeholders = implode(',', array_fill(0, count($to_delete), '?'));
+            $del_stmt = $pdo->prepare("DELETE FROM door_configurations WHERE id IN ($placeholders)");
+            $del_stmt->execute(array_values($to_delete));
         }
     }
 
@@ -72,7 +97,7 @@ if (!$work_order) {
     die('Work order not found');
 }
 
-$item_stmt = $pdo->prepare("SELECT item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by FROM work_order_items WHERE work_order_id=? ORDER BY id");
+$item_stmt = $pdo->prepare("SELECT item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by, door_configuration_id FROM work_order_items WHERE work_order_id=? ORDER BY id");
 $item_stmt->execute([$wo_id]);
 $items = $item_stmt->fetchAll();
 ?>
@@ -136,6 +161,14 @@ $items = $item_stmt->fetchAll();
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
+                                    <?php if ($it['item_type']==='Doors'): ?>
+                                    <div class='col-md-1'>
+                                        <?php if (!empty($it['door_configuration_id'])): ?>
+                                            <a href='door_configurator.php?id=<?php echo urlencode($it['door_configuration_id']); ?>' class='btn btn-sm btn-primary'>Configure</a>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php endif; ?>
+                                    <input type='hidden' name='items[<?php echo $index; ?>][door_config_id]' value='<?php echo htmlspecialchars($it['door_configuration_id'] ?? ''); ?>'>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
@@ -188,7 +221,9 @@ document.getElementById('add-item').addEventListener('click', function() {
                     <option value="<?php echo htmlspecialchars($fab['id']); ?>"><?php echo htmlspecialchars($fab['first_name'] . ' ' . $fab['last_name']); ?></option>
                 <?php endforeach; ?>
             </select>
-        </div>`;
+        </div>
+        <input type="hidden" name="items[${index}][door_config_id]" value="">
+    `;
     container.appendChild(row);
 });
 </script>

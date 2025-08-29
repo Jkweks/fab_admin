@@ -23,13 +23,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insert->execute([$job_id, $next, $delivery, $pull_from_stock, $delivered, $status]);
     $wo_id = $insert->fetchColumn();
     if (!empty($_POST['items'])) {
-        $item_sql = "INSERT INTO work_order_items (work_order_id, item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by) VALUES (?,?,?,?,?,?,?,?,?)";
+        $item_sql = "INSERT INTO work_order_items (work_order_id, item_type, elevation, quantity, scope, comments, date_required, date_completed, completed_by, door_configuration_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
         $item_stmt = $pdo->prepare($item_sql);
-        foreach ($_POST['items'] as $item) {
+        foreach ($_POST['items'] as $index => $item) {
             $quantity = isset($item['quantity']) && $item['quantity'] !== '' ? (int)$item['quantity'] : null;
             $date_required = !empty($item['date_required']) ? $item['date_required'] : null;
             $date_completed = !empty($item['date_completed']) ? $item['date_completed'] : null;
             $completed_by = isset($item['completed_by']) && $item['completed_by'] !== '' ? (int)$item['completed_by'] : null;
+
+            $door_config_id = null;
+            if (($item['item_type'] ?? '') === 'Doors') {
+                $name = !empty($item['elevation']) ? $item['elevation'] : 'Door ' . ($index + 1);
+                $dc_stmt = $pdo->prepare("INSERT INTO door_configurations (work_order_id, name) VALUES (?,?) RETURNING id");
+                $dc_stmt->execute([$wo_id, $name]);
+                $door_config_id = $dc_stmt->fetchColumn();
+            }
 
             $item_stmt->execute([
                 $wo_id,
@@ -41,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $date_required,
                 $date_completed,
                 $completed_by,
+                $door_config_id,
             ]);
         }
     }

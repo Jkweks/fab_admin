@@ -39,8 +39,11 @@ CREATE TABLE IF NOT EXISTS work_order_items (
     comments TEXT,
     date_required DATE,
     date_completed DATE,
-    completed_by INTEGER REFERENCES users(id)
+    completed_by INTEGER REFERENCES users(id),
+    door_configuration_id INTEGER REFERENCES door_configurations(id)
 );
+
+ALTER TABLE work_order_items ADD COLUMN IF NOT EXISTS door_configuration_id INTEGER REFERENCES door_configurations(id);
 
 CREATE TABLE IF NOT EXISTS manufacturers (
     id SERIAL PRIMARY KEY,
