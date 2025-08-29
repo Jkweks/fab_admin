@@ -7,31 +7,72 @@ if (!isset($_SESSION['user_id'])) {
 include 'includes/db.php';
 
 $jobs = $pdo->query("SELECT id, job_name FROM jobs ORDER BY job_name")->fetchAll();
+$config_id = $_GET['id'] ?? $_POST['id'] ?? null;
+$config = null;
+if ($config_id) {
+    $cfg_stmt = $pdo->prepare("SELECT dc.*, wo.job_id, jobs.job_name, wo.work_order_number FROM door_configurations dc JOIN work_orders wo ON dc.work_order_id = wo.id JOIN jobs ON wo.job_id = jobs.id WHERE dc.id=?");
+    $cfg_stmt->execute([$config_id]);
+    $config = $cfg_stmt->fetch();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $stmt = $pdo->prepare('INSERT INTO door_configurations (work_order_id, name, has_transom, opening_width, opening_height, frame_height, glazing_thickness, hinge_rail_id, lock_rail_id, top_rail_id, bottom_rail_id, top_gap, bottom_gap, hinge_gap, latch_gap, handing, hinge_rail_2_id, lock_rail_2_id, top_rail_2_id, bottom_rail_2_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-    $stmt->execute([
-        $_POST['work_order'],
-        $_POST['name'],
-        isset($_POST['has_transom']) ? 1 : 0,
-        $_POST['opening_width'] !== '' ? $_POST['opening_width'] : null,
-        $_POST['opening_height'] !== '' ? $_POST['opening_height'] : null,
-        $_POST['frame_height'] !== '' ? $_POST['frame_height'] : null,
-        $_POST['glazing'],
-        $_POST['hinge_rail'] !== '' ? $_POST['hinge_rail'] : null,
-        $_POST['lock_rail'] !== '' ? $_POST['lock_rail'] : null,
-        $_POST['top_rail'] !== '' ? $_POST['top_rail'] : null,
-        $_POST['bottom_rail'] !== '' ? $_POST['bottom_rail'] : null,
-        $_POST['top_gap'] !== '' ? $_POST['top_gap'] : null,
-        $_POST['bottom_gap'] !== '' ? $_POST['bottom_gap'] : null,
-        $_POST['hinge_gap'] !== '' ? $_POST['hinge_gap'] : null,
-        $_POST['latch_gap'] !== '' ? $_POST['latch_gap'] : null,
-        $_POST['handing'],
-        $_POST['hinge_rail_2'] !== '' ? $_POST['hinge_rail_2'] : null,
-        $_POST['lock_rail_2'] !== '' ? $_POST['lock_rail_2'] : null,
-        $_POST['top_rail_2'] !== '' ? $_POST['top_rail_2'] : null,
-        $_POST['bottom_rail_2'] !== '' ? $_POST['bottom_rail_2'] : null
-    ]);
+    $config_id = $_POST['id'] ?? null;
+    if ($config_id) {
+        $stmt = $pdo->prepare('UPDATE door_configurations SET name=?, has_transom=?, opening_width=?, opening_height=?, frame_height=?, glazing_thickness=?, hinge_rail_id=?, lock_rail_id=?, top_rail_id=?, bottom_rail_id=?, top_gap=?, bottom_gap=?, hinge_gap=?, latch_gap=?, handing=?, hinge_rail_2_id=?, lock_rail_2_id=?, top_rail_2_id=?, bottom_rail_2_id=? WHERE id=?');
+        $stmt->execute([
+            $_POST['name'],
+            isset($_POST['has_transom']) ? 1 : 0,
+            $_POST['opening_width'] !== '' ? $_POST['opening_width'] : null,
+            $_POST['opening_height'] !== '' ? $_POST['opening_height'] : null,
+            $_POST['frame_height'] !== '' ? $_POST['frame_height'] : null,
+            $_POST['glazing'],
+            $_POST['hinge_rail'] !== '' ? $_POST['hinge_rail'] : null,
+            $_POST['lock_rail'] !== '' ? $_POST['lock_rail'] : null,
+            $_POST['top_rail'] !== '' ? $_POST['top_rail'] : null,
+            $_POST['bottom_rail'] !== '' ? $_POST['bottom_rail'] : null,
+            $_POST['top_gap'] !== '' ? $_POST['top_gap'] : null,
+            $_POST['bottom_gap'] !== '' ? $_POST['bottom_gap'] : null,
+            $_POST['hinge_gap'] !== '' ? $_POST['hinge_gap'] : null,
+            $_POST['latch_gap'] !== '' ? $_POST['latch_gap'] : null,
+            $_POST['handing'],
+            $_POST['hinge_rail_2'] !== '' ? $_POST['hinge_rail_2'] : null,
+            $_POST['lock_rail_2'] !== '' ? $_POST['lock_rail_2'] : null,
+            $_POST['top_rail_2'] !== '' ? $_POST['top_rail_2'] : null,
+            $_POST['bottom_rail_2'] !== '' ? $_POST['bottom_rail_2'] : null,
+            $config_id
+        ]);
+        $cfg_stmt = $pdo->prepare("SELECT dc.*, wo.job_id, jobs.job_name, wo.work_order_number FROM door_configurations dc JOIN work_orders wo ON dc.work_order_id = wo.id JOIN jobs ON wo.job_id = jobs.id WHERE dc.id=?");
+        $cfg_stmt->execute([$config_id]);
+        $config = $cfg_stmt->fetch();
+    } else {
+        $stmt = $pdo->prepare('INSERT INTO door_configurations (work_order_id, name, has_transom, opening_width, opening_height, frame_height, glazing_thickness, hinge_rail_id, lock_rail_id, top_rail_id, bottom_rail_id, top_gap, bottom_gap, hinge_gap, latch_gap, handing, hinge_rail_2_id, lock_rail_2_id, top_rail_2_id, bottom_rail_2_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id');
+        $stmt->execute([
+            $_POST['work_order'],
+            $_POST['name'],
+            isset($_POST['has_transom']) ? 1 : 0,
+            $_POST['opening_width'] !== '' ? $_POST['opening_width'] : null,
+            $_POST['opening_height'] !== '' ? $_POST['opening_height'] : null,
+            $_POST['frame_height'] !== '' ? $_POST['frame_height'] : null,
+            $_POST['glazing'],
+            $_POST['hinge_rail'] !== '' ? $_POST['hinge_rail'] : null,
+            $_POST['lock_rail'] !== '' ? $_POST['lock_rail'] : null,
+            $_POST['top_rail'] !== '' ? $_POST['top_rail'] : null,
+            $_POST['bottom_rail'] !== '' ? $_POST['bottom_rail'] : null,
+            $_POST['top_gap'] !== '' ? $_POST['top_gap'] : null,
+            $_POST['bottom_gap'] !== '' ? $_POST['bottom_gap'] : null,
+            $_POST['hinge_gap'] !== '' ? $_POST['hinge_gap'] : null,
+            $_POST['latch_gap'] !== '' ? $_POST['latch_gap'] : null,
+            $_POST['handing'],
+            $_POST['hinge_rail_2'] !== '' ? $_POST['hinge_rail_2'] : null,
+            $_POST['lock_rail_2'] !== '' ? $_POST['lock_rail_2'] : null,
+            $_POST['top_rail_2'] !== '' ? $_POST['top_rail_2'] : null,
+            $_POST['bottom_rail_2'] !== '' ? $_POST['bottom_rail_2'] : null
+        ]);
+        $config_id = $stmt->fetchColumn();
+        $cfg_stmt = $pdo->prepare("SELECT dc.*, wo.job_id, jobs.job_name, wo.work_order_number FROM door_configurations dc JOIN work_orders wo ON dc.work_order_id = wo.id JOIN jobs ON wo.job_id = jobs.id WHERE dc.id=?");
+        $cfg_stmt->execute([$config_id]);
+        $config = $cfg_stmt->fetch();
+    }
 }
 $hinge_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $lock_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
@@ -70,68 +111,82 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                             </li>
                         </ul>
                         <form method='post'>
+                            <input type='hidden' name='id' value='<?php echo htmlspecialchars($config_id ?? ""); ?>'>
                             <div class='tab-content pt-3' id='doorTabContent'>
                                 <div class='tab-pane fade show active' id='info' role='tabpanel'>
                                     <div class='mb-3'>
                                         <label class='form-label'>Job</label>
+                                        <?php if ($config): ?>
+                                        <select class='form-select' id='job_select' required disabled>
+                                            <option value='<?php echo htmlspecialchars($config['job_id']); ?>' selected><?php echo htmlspecialchars($config['job_name']); ?></option>
+                                        </select>
+                                        <?php else: ?>
                                         <select class='form-select' id='job_select' required>
                                             <option value=''>Select Job</option>
                                             <?php foreach ($jobs as $job): ?>
                                                 <option value='<?php echo htmlspecialchars($job['id']); ?>'><?php echo htmlspecialchars($job['job_name']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
+                                        <?php endif; ?>
                                     </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Work Order</label>
+                                        <?php if ($config): ?>
+                                        <select class='form-select' name='work_order' id='work_order_select' required disabled>
+                                            <option value='<?php echo htmlspecialchars($config['work_order_id']); ?>' selected>Work Order <?php echo htmlspecialchars($config['work_order_number']); ?></option>
+                                        </select>
+                                        <input type='hidden' name='work_order' value='<?php echo htmlspecialchars($config['work_order_id']); ?>'>
+                                        <?php else: ?>
                                         <select class='form-select' name='work_order' id='work_order_select' required disabled>
                                             <option value=''>Select Work Order</option>
                                         </select>
+                                        <?php endif; ?>
                                     </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Door Name</label>
-                                        <input type='text' class='form-control' name='name' required>
+                                        <input type='text' class='form-control' name='name' required value='<?php echo htmlspecialchars($config['name'] ?? ""); ?>'>
                                     </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Handing</label>
                                         <select class='form-select' name='handing' id='handing'>
-                                            <option value='single_lh_rhr'>Single - LH/RHR</option>
-                                            <option value='single_rh_lhr'>Single - RH/LHR</option>
-                                            <option value='pair_rhra'>Pair - RHRA</option>
-                                            <option value='pair_lhra'>Pair - LHRA</option>
+                                            <option value='single_lh_rhr' <?php if (($config['handing'] ?? '')==='single_lh_rhr') echo 'selected'; ?>>Single - LH/RHR</option>
+                                            <option value='single_rh_lhr' <?php if (($config['handing'] ?? '')==='single_rh_lhr') echo 'selected'; ?>>Single - RH/LHR</option>
+                                            <option value='pair_rhra' <?php if (($config['handing'] ?? '')==='pair_rhra') echo 'selected'; ?>>Pair - RHRA</option>
+                                            <option value='pair_lhra' <?php if (($config['handing'] ?? '')==='pair_lhra') echo 'selected'; ?>>Pair - LHRA</option>
                                         </select>
                                     </div>
                                     <div class='mb-3 form-check'>
-                                        <input class='form-check-input' type='checkbox' id='has_transom' name='has_transom'>
+                                        <input class='form-check-input' type='checkbox' id='has_transom' name='has_transom' <?php if (!empty($config['has_transom'])) echo 'checked'; ?>>
                                         <label class='form-check-label' for='has_transom'>Has Transom</label>
                                     </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Opening Width</label>
-                                        <input type='number' step='any' class='form-control' name='opening_width'>
+                                        <input type='number' step='any' class='form-control' name='opening_width' value='<?php echo htmlspecialchars($config['opening_width'] ?? ""); ?>'>
                                     </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Opening Height</label>
-                                        <input type='number' step='any' class='form-control' name='opening_height'>
+                                        <input type='number' step='any' class='form-control' name='opening_height' value='<?php echo htmlspecialchars($config['opening_height'] ?? ""); ?>'>
                                     </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Total Frame Height</label>
-                                        <input type='number' step='any' class='form-control' name='frame_height' id='frame_height' disabled>
+                                        <input type='number' step='any' class='form-control' name='frame_height' id='frame_height' value='<?php echo htmlspecialchars($config['frame_height'] ?? ""); ?>' disabled>
                                     </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Glazing</label>
                                         <select class='form-select' name='glazing'>
-                                            <option value='1/4'>1/4"</option>
-                                            <option value='3/8'>3/8"</option>
-                                            <option value='1/2'>1/2"</option>
-                                            <option value='1'>1"</option>
+                                            <option value='1/4' <?php if (($config['glazing_thickness'] ?? '')==='1/4') echo 'selected'; ?>>1/4"</option>
+                                            <option value='3/8' <?php if (($config['glazing_thickness'] ?? '')==='3/8') echo 'selected'; ?>>3/8"</option>
+                                            <option value='1/2' <?php if (($config['glazing_thickness'] ?? '')==='1/2') echo 'selected'; ?>>1/2"</option>
+                                            <option value='1' <?php if (($config['glazing_thickness'] ?? '')==='1') echo 'selected'; ?>>1"</option>
                                         </select>
                                     </div>
                                     <div class='mb-3'>
                                         <a href='#' id='edit-settings'>Edit Global Settings</a>
                                     </div>
-                                    <input type='hidden' name='top_gap' id='top_gap' value='0.125'>
-                                    <input type='hidden' name='bottom_gap' id='bottom_gap' value='0.6975'>
-                                    <input type='hidden' name='hinge_gap' id='hinge_gap' value='0.0625'>
-                                    <input type='hidden' name='latch_gap' id='latch_gap' value='0.125'>
+                                    <input type='hidden' name='top_gap' id='top_gap' value='<?php echo htmlspecialchars($config['top_gap'] ?? 0.125); ?>'>
+                                    <input type='hidden' name='bottom_gap' id='bottom_gap' value='<?php echo htmlspecialchars($config['bottom_gap'] ?? 0.6975); ?>'>
+                                    <input type='hidden' name='hinge_gap' id='hinge_gap' value='<?php echo htmlspecialchars($config['hinge_gap'] ?? 0.0625); ?>'>
+                                    <input type='hidden' name='latch_gap' id='latch_gap' value='<?php echo htmlspecialchars($config['latch_gap'] ?? 0.125); ?>'>
                                 </div>
                                 <div class='tab-pane fade' id='parts' role='tabpanel'>
                                     <div class='mb-3'>
@@ -139,7 +194,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                         <select class='form-select' name='hinge_rail'>
                                             <option value=''>Select Hinge Rail</option>
                                             <?php foreach ($hinge_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['hinge_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -148,7 +203,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                         <select class='form-select' name='lock_rail'>
                                             <option value=''>Select Lock Rail</option>
                                             <?php foreach ($lock_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['lock_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -157,7 +212,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                         <select class='form-select' name='top_rail'>
                                             <option value=''>Select Top Rail</option>
                                             <?php foreach ($top_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['top_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -166,7 +221,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                         <select class='form-select' name='bottom_rail'>
                                             <option value=''>Select Bottom Rail</option>
                                             <?php foreach ($bottom_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['bottom_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -177,7 +232,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                             <select class='form-select' name='hinge_rail_2'>
                                                 <option value=''>Select Hinge Rail</option>
                                                 <?php foreach ($hinge_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['hinge_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -186,7 +241,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                             <select class='form-select' name='lock_rail_2'>
                                                 <option value=''>Select Lock Rail</option>
                                                 <?php foreach ($lock_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['lock_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -195,7 +250,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                             <select class='form-select' name='top_rail_2'>
                                                 <option value=''>Select Top Rail</option>
                                                 <?php foreach ($top_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['top_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -204,7 +259,7 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                             <select class='form-select' name='bottom_rail_2'>
                                                 <option value=''>Select Bottom Rail</option>
                                                 <?php foreach ($bottom_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['bottom_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -317,6 +372,7 @@ var handingSelect = document.getElementById('handing');
 handingSelect.addEventListener('change', function() {
     document.getElementById('second_leaf').style.display = this.value.startsWith('pair') ? 'block' : 'none';
 });
+handingSelect.dispatchEvent(new Event('change'));
 
 document.getElementById('edit-settings').addEventListener('click', function(e){
     e.preventDefault();

@@ -25,11 +25,11 @@ foreach ($work_orders as $wo) {
         echo '<p>Material Delivery: ' . htmlspecialchars($wo['material_delivery_date'] ?? '') . '</p>';
     }
 
-    $item_stmt = $pdo->prepare("SELECT item_type, elevation, quantity, scope, comments, date_required, date_completed, CONCAT(u.first_name, ' ', u.last_name) AS completed_by_name FROM work_order_items LEFT JOIN users u ON work_order_items.completed_by = u.id WHERE work_order_id = ? ORDER BY work_order_items.id");
+    $item_stmt = $pdo->prepare("SELECT item_type, elevation, quantity, scope, comments, date_required, date_completed, CONCAT(u.first_name, ' ', u.last_name) AS completed_by_name, door_configuration_id FROM work_order_items LEFT JOIN users u ON work_order_items.completed_by = u.id WHERE work_order_id = ? ORDER BY work_order_items.id");
     $item_stmt->execute([$wo['id']]);
     $items = $item_stmt->fetchAll();
     if ($items) {
-        echo "<table class='table'><thead><tr><th>Type</th><th>Elevation</th><th>Qty</th><th>Scope</th><th>Comments</th><th>Date Required</th><th>Date Completed</th><th>Completed By</th></tr></thead><tbody>";
+        echo "<table class='table'><thead><tr><th>Type</th><th>Elevation</th><th>Qty</th><th>Scope</th><th>Comments</th><th>Date Required</th><th>Date Completed</th><th>Completed By</th><th>Configure</th></tr></thead><tbody>";
         foreach ($items as $it) {
             echo '<tr>';
             echo '<td>' . htmlspecialchars($it['item_type'] ?? '') . '</td>';
@@ -40,6 +40,11 @@ foreach ($work_orders as $wo) {
             echo '<td>' . htmlspecialchars($it['date_required'] ?? '') . '</td>';
             echo '<td>' . htmlspecialchars($it['date_completed'] ?? '') . '</td>';
             echo '<td>' . htmlspecialchars($it['completed_by_name'] ?? '') . '</td>';
+            if ($it['item_type'] === 'Doors' && !empty($it['door_configuration_id'])) {
+                echo "<td><a href='door_configurator.php?id=" . urlencode($it['door_configuration_id']) . "' class='btn btn-sm btn-primary'>Configure</a></td>";
+            } else {
+                echo '<td></td>';
+            }
             echo '</tr>';
         }
         echo '</tbody></table>';
