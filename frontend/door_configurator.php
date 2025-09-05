@@ -78,6 +78,7 @@ $hinge_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, d
 $lock_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $top_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'top_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'bottom_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$part_presets = $pdo->query("SELECT id, name, hinge_rail_id, lock_rail_id, top_rail_id, bottom_rail_id FROM door_part_presets ORDER BY name")->fetchAll();
 ?>
 <?php include 'includes/header.php'; ?>
 <div class='container-xxl position-relative bg-white d-flex p-0'>
@@ -189,6 +190,15 @@ $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, 
                                     <input type='hidden' name='latch_gap' id='latch_gap' value='<?php echo htmlspecialchars($config['latch_gap'] ?? 0.125); ?>'>
                                 </div>
                                 <div class='tab-pane fade' id='parts' role='tabpanel'>
+                                    <div class='mb-3'>
+                                        <label class='form-label'>Preset</label>
+                                        <select class='form-select' id='preset_select'>
+                                            <option value=''>Select Preset</option>
+                                            <?php foreach ($part_presets as $preset): ?>
+                                                <option value='<?php echo htmlspecialchars($preset['id']); ?>' data-hinge='<?php echo htmlspecialchars($preset['hinge_rail_id']); ?>' data-lock='<?php echo htmlspecialchars($preset['lock_rail_id']); ?>' data-top='<?php echo htmlspecialchars($preset['top_rail_id']); ?>' data-bottom='<?php echo htmlspecialchars($preset['bottom_rail_id']); ?>'><?php echo htmlspecialchars($preset['name']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Hinge Rail</label>
                                         <select class='form-select' name='hinge_rail'>
@@ -373,6 +383,22 @@ handingSelect.addEventListener('change', function() {
     document.getElementById('second_leaf').style.display = this.value.startsWith('pair') ? 'block' : 'none';
 });
 handingSelect.dispatchEvent(new Event('change'));
+
+var presetSelect = document.getElementById('preset_select');
+if (presetSelect) {
+    presetSelect.addEventListener('change', function() {
+        var opt = this.options[this.selectedIndex];
+        if (!opt) return;
+        var hinge = opt.dataset.hinge || '';
+        var lock = opt.dataset.lock || '';
+        var top = opt.dataset.top || '';
+        var bottom = opt.dataset.bottom || '';
+        if (hinge) document.querySelector("select[name='hinge_rail']").value = hinge;
+        if (lock) document.querySelector("select[name='lock_rail']").value = lock;
+        if (top) document.querySelector("select[name='top_rail']").value = top;
+        if (bottom) document.querySelector("select[name='bottom_rail']").value = bottom;
+    });
+}
 
 document.getElementById('edit-settings').addEventListener('click', function(e){
     e.preventDefault();

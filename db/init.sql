@@ -95,6 +95,15 @@ CREATE TABLE IF NOT EXISTS door_part_requirements (
     quantity INTEGER NOT NULL DEFAULT 1
 );
 
+CREATE TABLE IF NOT EXISTS door_part_presets (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    hinge_rail_id INTEGER REFERENCES door_parts(id),
+    lock_rail_id INTEGER REFERENCES door_parts(id),
+    top_rail_id INTEGER REFERENCES door_parts(id),
+    bottom_rail_id INTEGER REFERENCES door_parts(id)
+);
+
 CREATE TABLE IF NOT EXISTS door_configurations (
     id SERIAL PRIMARY KEY,
     work_order_id INTEGER REFERENCES work_orders(id),
