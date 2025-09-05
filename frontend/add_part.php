@@ -45,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lx = $_POST['lx'] !== '' ? $_POST['lx'] : null;
             $ly = $_POST['ly'] !== '' ? $_POST['ly'] : null;
             $lz = $_POST['lz'] !== '' ? $_POST['lz'] : null;
-            $function = 'frame';
+            $function = $_POST['frame_function'] ?? 'frame';
+            $functions_selected = [$function];
             break;
         case 'fastener':
             $lx = $_POST['length'] !== '' ? $_POST['length'] : null;
@@ -220,6 +221,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     var option = Array.from(select.options).find(o => o.value === f);
                                                     if (option) option.selected = true;
                                                 });
+                                            }
+                                            if (category === 'frame') {
+                                                var fSelect = document.querySelector('select[name="frame_function"]');
+                                                if (fSelect && currentFunctions[0]) {
+                                                    fSelect.value = currentFunctions[0];
+                                                }
                                             }
                                         }
                                     });
