@@ -30,7 +30,7 @@
     <link href="css/style.css" rel="stylesheet">
 
     <!-- Dark Mode Stylesheet -->
-    <link href="css/dark.css" rel="stylesheet">
+    <link href="css/dark-theme.css" rel="stylesheet">
 </head>
 <?php $theme = $_SESSION['theme'] ?? 'light'; ?>
-<body data-theme="<?php echo htmlspecialchars($theme); ?>">
+<body data-bs-theme="<?php echo htmlspecialchars($theme); ?>">

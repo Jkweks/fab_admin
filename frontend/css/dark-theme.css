@@ -1,0 +1,29 @@
+/* Dark mode theme variables */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #191C24;
+    --bs-body-color: #F3F6F9;
+    --bs-dark: #F3F6F9;
+    --bs-light: #191C24;
+}
+
+[data-bs-theme="dark"] .bg-light {
+    background-color: var(--bs-body-bg) !important;
+}
+
+[data-bs-theme="dark"] .text-dark {
+    color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .navbar {
+    background-color: var(--bs-body-bg) !important;
+}
+
+[data-bs-theme="dark"] .table {
+    --bs-table-bg: var(--bs-body-bg);
+    --bs-table-color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .btn-primary {
+    --bs-btn-bg: #0d6efd;
+    --bs-btn-border-color: #0d6efd;
+}
