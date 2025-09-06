@@ -204,17 +204,17 @@
 
     // Theme toggler
     document.addEventListener('DOMContentLoaded', function () {
-        var toggle = document.getElementById('darkMode');
+        var select = document.getElementById('theme-select');
         var stored = localStorage.getItem('theme');
         if (stored) {
             document.body.setAttribute('data-theme', stored);
-            if (toggle) toggle.checked = stored === 'dark';
+            if (select) select.value = stored;
         } else {
             localStorage.setItem('theme', document.body.getAttribute('data-theme'));
         }
-        if (toggle) {
-            toggle.addEventListener('change', function () {
-                var theme = this.checked ? 'dark' : 'light';
+        if (select) {
+            select.addEventListener('change', function () {
+                var theme = this.value;
                 document.body.setAttribute('data-theme', theme);
                 localStorage.setItem('theme', theme);
             });

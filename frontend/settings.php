@@ -5,9 +5,13 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 require_once 'includes/db.php';
+$themes = ['light', 'dark', 'cupcake', 'night', 'forest'];
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $theme = ($_POST['theme'] ?? 'light') === 'dark' ? 'dark' : 'light';
+    $theme = $_POST['theme'] ?? 'light';
+    if (!in_array($theme, $themes, true)) {
+        $theme = 'light';
+    }
     $stmt = $pdo->prepare('UPDATE users SET theme = ? WHERE id = ?');
     $stmt->execute([$theme, $_SESSION['user_id']]);
     $_SESSION['theme'] = $theme;
@@ -30,13 +34,17 @@ $currentTheme = $_SESSION['theme'] ?? 'light';
                             <?php if ($message): ?>
                             <div class="alert alert-success" role="alert"><?php echo $message; ?></div>
                             <?php endif; ?>
-                            <form method="post">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="darkMode" name="theme" value="dark" <?php if ($currentTheme === 'dark') echo 'checked'; ?>>
-                                    <label class="form-check-label" for="darkMode">Enable Dark Mode</label>
-                                </div>
-                                <button type="submit" class="btn btn-primary mt-3">Save</button>
-                            </form>
+                              <form method="post">
+                                  <div class="mb-3">
+                                      <label for="theme-select" class="form-label">Select Theme</label>
+                                      <select id="theme-select" name="theme" class="form-select">
+                                          <?php foreach ($themes as $t): ?>
+                                              <option value="<?php echo htmlspecialchars($t); ?>" <?php if ($currentTheme === $t) echo 'selected'; ?>><?php echo htmlspecialchars(ucfirst($t)); ?></option>
+                                          <?php endforeach; ?>
+                                      </select>
+                                  </div>
+                                  <button type="submit" class="btn btn-primary mt-3">Save</button>
+                              </form>
                         </div>
                     </div>
                 </div>
