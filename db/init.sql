@@ -108,6 +108,15 @@ CREATE TABLE IF NOT EXISTS door_part_presets (
 
 ALTER TABLE door_parts ADD COLUMN IF NOT EXISTS usage VARCHAR(50);
 
+CREATE TABLE IF NOT EXISTS system_default_parts (
+    id SERIAL PRIMARY KEY,
+    system_id INTEGER REFERENCES systems(id) ON DELETE CASCADE,
+    glazing_thickness VARCHAR(10) NOT NULL,
+    function VARCHAR(50) NOT NULL,
+    part_id INTEGER REFERENCES door_parts(id) ON DELETE SET NULL,
+    UNIQUE (system_id, glazing_thickness, function)
+);
+
 CREATE TABLE IF NOT EXISTS door_configurations (
     id SERIAL PRIMARY KEY,
     work_order_id INTEGER REFERENCES work_orders(id),

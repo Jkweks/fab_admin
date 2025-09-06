@@ -46,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lx = $_POST['lx'] !== '' ? $_POST['lx'] : null;
             $ly = $_POST['ly'] !== '' ? $_POST['ly'] : null;
             $lz = $_POST['lz'] !== '' ? $_POST['lz'] : null;
-            $function = $_POST['frame_function'] ?? 'frame';
-            $functions_selected = [$function];
+            $functions_selected = isset($_POST['frame_functions']) ? $_POST['frame_functions'] : [];
+            $function = $functions_selected[0] ?? 'frame';
             break;
         case 'fastener':
             $lx = $_POST['length'] !== '' ? $_POST['length'] : null;
@@ -226,9 +226,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 });
                                             }
                                             if (category === 'frame') {
-                                                var fSelect = document.querySelector('select[name="frame_function"]');
-                                                if (fSelect && currentFunctions[0]) {
-                                                    fSelect.value = currentFunctions[0];
+                                                var fSelect = document.querySelector('select[name="frame_functions[]"]');
+                                                if (fSelect) {
+                                                    currentFunctions.forEach(function(f) {
+                                                        var option = Array.from(fSelect.options).find(o => o.value === f);
+                                                        if (option) option.selected = true;
+                                                    });
                                                 }
                                                 var uSelect = document.querySelector('select[name="usage"]');
                                                 if (uSelect && currentUsage) {
