@@ -11,5 +11,6 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script src="js/settings.js"></script>
 </body>
 </html>

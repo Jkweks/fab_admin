@@ -202,24 +202,5 @@
         }
     });
 
-    // Theme toggler
-    document.addEventListener('DOMContentLoaded', function () {
-        var select = document.getElementById('theme-select');
-        var stored = localStorage.getItem('theme');
-        if (stored) {
-            document.body.setAttribute('data-theme', stored);
-            if (select) select.value = stored;
-        } else {
-            localStorage.setItem('theme', document.body.getAttribute('data-theme'));
-        }
-        if (select) {
-            select.addEventListener('change', function () {
-                var theme = this.value;
-                document.body.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-            });
-        }
-    });
-
 })(jQuery);
 
