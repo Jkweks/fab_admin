@@ -80,6 +80,8 @@ $top_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.
 $bottom_parts = $pdo->query("SELECT DISTINCT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'bottom_rail' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $part_presets = $pdo->query("SELECT id, name, hinge_rail_id, lock_rail_id, top_rail_id, bottom_rail_id FROM door_part_presets ORDER BY name")->fetchAll();
 
+$systems = $pdo->query("SELECT m.name AS manufacturer, s.name AS system FROM systems s JOIN manufacturers m ON s.manufacturer_id = m.id ORDER BY m.name, s.name")->fetchAll();
+
 $hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_jamb' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $lock_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_jamb' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $rh_hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'rh_hinge_jamb' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
@@ -214,6 +216,14 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         </select>
                                     </div>
                                     <div class='mb-3'>
+                                        <label class='form-label'>Finish</label>
+                                        <select class='form-select' name='door_finish'>
+                                            <option value='c2' <?php if (($config['door_finish'] ?? '')==='c2') echo 'selected'; ?>>C2</option>
+                                            <option value='db' <?php if (($config['door_finish'] ?? '')==='db') echo 'selected'; ?>>DB</option>
+                                            <option value='bl' <?php if (($config['door_finish'] ?? '')==='bl') echo 'selected'; ?>>BL</option>
+                                        </select>
+                                    </div>
+                                    <div class='mb-3'>
                                         <label class='form-label'>Hinge Rail</label>
                                         <select class='form-select' name='hinge_rail'>
                                             <option value=''>Select Hinge Rail</option>
@@ -292,7 +302,12 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                 <div class='tab-pane fade' id='frame' role='tabpanel'>
                                     <div class='mb-3'>
                                         <label class='form-label'>System</label>
-                                        <input type='text' class='form-control' name='frame_system'>
+                                        <select class='form-select' name='frame_system'>
+                                            <option value=''>Select System</option>
+                                            <?php foreach ($systems as $sys): ?>
+                                                <option value='<?php echo htmlspecialchars($sys['system']); ?>' <?php if (($config['frame_system'] ?? '') == $sys['system']) echo 'selected'; ?>><?php echo htmlspecialchars($sys['manufacturer'] . ' ' . $sys['system']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                     <div class='mb-3'>
                                         <label class='form-label'>Finish</label>

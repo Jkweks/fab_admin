@@ -79,7 +79,8 @@ CREATE TABLE IF NOT EXISTS door_parts (
     ly NUMERIC,
     lz NUMERIC,
     function VARCHAR(50) NOT NULL,
-    category VARCHAR(50) NOT NULL DEFAULT 'door'
+    category VARCHAR(50) NOT NULL DEFAULT 'door',
+    usage VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS door_part_functions (
@@ -103,6 +104,8 @@ CREATE TABLE IF NOT EXISTS door_part_presets (
     top_rail_id INTEGER REFERENCES door_parts(id),
     bottom_rail_id INTEGER REFERENCES door_parts(id)
 );
+
+ALTER TABLE door_parts ADD COLUMN IF NOT EXISTS usage VARCHAR(50);
 
 CREATE TABLE IF NOT EXISTS door_configurations (
     id SERIAL PRIMARY KEY,

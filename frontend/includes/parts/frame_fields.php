@@ -18,6 +18,17 @@
     </select>
 </div>
 <div class='mb-3'>
+    <label class='form-label'>Usage</label>
+    <select class='form-select' name='usage'>
+        <option value=''>Select Usage</option>
+        <option value='door_jamb'>Door Jamb</option>
+        <option value='door_stop'>Door Stop</option>
+        <option value='door_header'>Door Header</option>
+        <option value='transom_gutter'>Transom Gutter</option>
+        <option value='transom_stop'>Transom Stop</option>
+    </select>
+    </div>
+<div class='mb-3'>
     <label class='form-label'>LX</label>
     <input type='number' step='any' class='form-control' name='lx'>
 </div>
