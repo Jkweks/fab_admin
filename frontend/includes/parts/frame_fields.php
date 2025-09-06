@@ -1,7 +1,6 @@
 <div class='mb-3'>
-    <label class='form-label'>Function</label>
-    <select class='form-select' name='frame_function' required>
-        <option value=''>Select Function</option>
+    <label class='form-label'>Functions</label>
+    <select class='form-select' name='frame_functions[]' multiple required>
         <option value='hinge_jamb'>Hinge Jamb</option>
         <option value='lock_jamb'>Lock Jamb</option>
         <option value='rh_hinge_jamb'>RH Hinge Jamb</option>
@@ -14,6 +13,8 @@
         <option value='horizontal_transom_gutter'>Horizontal Transom Gutter</option>
         <option value='horizontal_transom_stop'>Horizontal Transom Stop</option>
         <option value='vertical_transom_gutter'>Vertical Transom Gutter</option>
+        <option value='vertical_transom_stop'>Vertical Transom Stop</option>
+        <option value='head_transom_stop'>Head Transom Stop</option>
         <option value='transom_head_perimeter_filler'>Transom Head Perimeter Filler</option>
     </select>
 </div>
