@@ -29,4 +29,5 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 </head>
-<body>
+<?php $theme = $_SESSION['theme'] ?? 'light'; ?>
+<body data-theme="<?php echo htmlspecialchars($theme); ?>">
