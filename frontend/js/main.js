@@ -202,6 +202,24 @@
         }
     });
 
-    
+    // Theme toggler
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('darkMode');
+        var stored = localStorage.getItem('theme');
+        if (stored) {
+            document.body.setAttribute('data-theme', stored);
+            if (toggle) toggle.checked = stored === 'dark';
+        } else {
+            localStorage.setItem('theme', document.body.getAttribute('data-theme'));
+        }
+        if (toggle) {
+            toggle.addEventListener('change', function () {
+                var theme = this.checked ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            });
+        }
+    });
+
 })(jQuery);
 
