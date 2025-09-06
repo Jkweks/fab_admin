@@ -28,6 +28,9 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
+    <!-- DaisyUI Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" />
 </head>
 <?php $theme = $_SESSION['theme'] ?? 'light'; ?>
 <body data-theme="<?php echo htmlspecialchars($theme); ?>">
