@@ -106,6 +106,12 @@ $existing_parts = $parts_stmt->fetchAll();
                                         <option value='lock_rail'>Lock Rail</option>
                                         <option value='top_rail'>Top Rail</option>
                                         <option value='bottom_rail'>Bottom Rail</option>
+                                        <option value='tie_rod'>Tie Rod</option>
+                                        <option value='door_lug'>Door Lug</option>
+                                        <option value='midrail'>Midrail</option>
+                                        <option value='glass_stop'>Glass Stop</option>
+                                        <option value='glazing_vinyl'>Glazing Vinyl</option>
+                                        <option value='glazing_accessory'>Glazing Accessory</option>
                                     </select>
                                 </div>
                                 <div class='mb-3'>
