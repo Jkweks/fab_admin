@@ -13,35 +13,43 @@ include 'includes/db.php';
 $manufacturers = $pdo->query('SELECT name FROM manufacturers ORDER BY name')->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $functions = isset($_POST['functions']) ? $_POST['functions'] : [];
-    $primary_function = $functions[0] ?? null;
-    $stmt = $pdo->prepare('INSERT INTO door_parts (manufacturer, system, part_number, lx, ly, lz, function, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute([
-        $_POST['manufacturer'],
-        $_POST['system'],
-        $_POST['part_number'],
-        $_POST['lx'] !== '' ? $_POST['lx'] : null,
-        $_POST['ly'] !== '' ? $_POST['ly'] : null,
-        $_POST['lz'] !== '' ? $_POST['lz'] : null,
-        $primary_function,
-        $_POST['category']
-    ]);
-    $part_id = $pdo->lastInsertId();
-    if (!empty($functions)) {
-        $func_stmt = $pdo->prepare('INSERT INTO door_part_functions (part_id, function) VALUES (?, ?)');
-        foreach ($functions as $func) {
-            $func_stmt->execute([$part_id, $func]);
+$functions = isset($_POST['functions']) ? $_POST['functions'] : [];
+$systems = isset($_POST['systems']) ? $_POST['systems'] : [];
+$primary_function = $functions[0] ?? null;
+$primary_system = $systems[0] ?? null;
+$stmt = $pdo->prepare('INSERT INTO door_parts (manufacturer, system, part_number, lx, ly, lz, function, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+$stmt->execute([
+    $_POST['manufacturer'],
+    $primary_system,
+    $_POST['part_number'],
+    $_POST['lx'] !== '' ? $_POST['lx'] : null,
+    $_POST['ly'] !== '' ? $_POST['ly'] : null,
+    $_POST['lz'] !== '' ? $_POST['lz'] : null,
+    $primary_function,
+    $_POST['category']
+]);
+$part_id = $pdo->lastInsertId();
+if (!empty($functions)) {
+    $func_stmt = $pdo->prepare('INSERT INTO door_part_functions (part_id, function) VALUES (?, ?)');
+    foreach ($functions as $func) {
+        $func_stmt->execute([$part_id, $func]);
+    }
+}
+if (!empty($systems)) {
+    $sys_stmt = $pdo->prepare('INSERT INTO door_part_systems (part_id, system) VALUES (?, ?)');
+    foreach ($systems as $sys) {
+        $sys_stmt->execute([$part_id, $sys]);
+    }
+}
+if (!empty($_POST['required_parts'])) {
+    $req_stmt = $pdo->prepare('INSERT INTO door_part_requirements (part_id, required_part_id, quantity) VALUES (?, ?, ?)');
+    foreach ($_POST['required_parts'] as $index => $req) {
+        if ($req !== '') {
+            $qty = isset($_POST['required_quantities'][$index]) && $_POST['required_quantities'][$index] !== '' ? $_POST['required_quantities'][$index] : 1;
+            $req_stmt->execute([$part_id, $req, $qty]);
         }
     }
-    if (!empty($_POST['required_parts'])) {
-        $req_stmt = $pdo->prepare('INSERT INTO door_part_requirements (part_id, required_part_id, quantity) VALUES (?, ?, ?)');
-        foreach ($_POST['required_parts'] as $index => $req) {
-            if ($req !== '') {
-                $qty = isset($_POST['required_quantities'][$index]) && $_POST['required_quantities'][$index] !== '' ? $_POST['required_quantities'][$index] : 1;
-                $req_stmt->execute([$part_id, $req, $qty]);
-            }
-        }
-    }
+}
 }
 
 $parts_stmt = $pdo->query('SELECT id, manufacturer, system, part_number FROM door_parts ORDER BY manufacturer, system, part_number');
@@ -69,8 +77,8 @@ $existing_parts = $parts_stmt->fetchAll();
                                     </select>
                                 </div>
                                 <div class='mb-3'>
-                                    <label class='form-label'>System</label>
-                                    <select class='form-select' name='system' id='system' required disabled>
+                                    <label class='form-label'>Systems</label>
+                                    <select class='form-select' name='systems[]' id='system' multiple required disabled>
                                         <option value=''>Select Manufacturer First</option>
                                     </select>
                                 </div>

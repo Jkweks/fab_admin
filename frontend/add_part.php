@@ -18,6 +18,7 @@ $edit_mode = false;
 $part_data = null;
 $existing_functions = [];
 $existing_requirements = [];
+$existing_systems = [];
 
 if (isset($_GET['id'])) {
     $stmt = $pdo->prepare('SELECT * FROM door_parts WHERE id = ?');
@@ -31,6 +32,9 @@ if (isset($_GET['id'])) {
         $req_stmt = $pdo->prepare('SELECT required_part_id, quantity FROM door_part_requirements WHERE part_id = ?');
         $req_stmt->execute([$part_data['id']]);
         $existing_requirements = $req_stmt->fetchAll();
+        $sys_stmt = $pdo->prepare('SELECT system FROM door_part_systems WHERE part_id = ?');
+        $sys_stmt->execute([$part_data['id']]);
+        $existing_systems = $sys_stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 }
 
@@ -40,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $function = null;
     $functions_selected = [];
     $usage = $_POST['usage'] ?? null;
+    $systems = isset($_POST['systems']) ? $_POST['systems'] : [];
+    $primary_system = $systems[0] ?? null;
 
     switch ($category) {
         case 'frame':
@@ -71,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare('UPDATE door_parts SET manufacturer = ?, system = ?, part_number = ?, lx = ?, ly = ?, lz = ?, function = ?, category = ?, usage = ? WHERE id = ?');
         $stmt->execute([
             $_POST['manufacturer'],
-            $_POST['system'],
+            $primary_system,
             $_POST['part_number'],
             $lx,
             $ly,
@@ -83,11 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
         $pdo->prepare('DELETE FROM door_part_functions WHERE part_id = ?')->execute([$part_id]);
         $pdo->prepare('DELETE FROM door_part_requirements WHERE part_id = ?')->execute([$part_id]);
+        $pdo->prepare('DELETE FROM door_part_systems WHERE part_id = ?')->execute([$part_id]);
     } else {
         $stmt = $pdo->prepare('INSERT INTO door_parts (manufacturer, system, part_number, lx, ly, lz, function, category, usage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->execute([
             $_POST['manufacturer'],
-            $_POST['system'],
+            $primary_system,
             $_POST['part_number'],
             $lx,
             $ly,
@@ -103,6 +110,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $func_stmt = $pdo->prepare('INSERT INTO door_part_functions (part_id, function) VALUES (?, ?)');
         foreach ($functions_selected as $func) {
             $func_stmt->execute([$part_id, $func]);
+        }
+    }
+    if (!empty($systems)) {
+        $sys_stmt = $pdo->prepare('INSERT INTO door_part_systems (part_id, system) VALUES (?, ?)');
+        foreach ($systems as $sys) {
+            $sys_stmt->execute([$part_id, $sys]);
         }
     }
     if (!empty($_POST['required_parts'])) {
@@ -124,6 +137,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $req_stmt = $pdo->prepare('SELECT required_part_id, quantity FROM door_part_requirements WHERE part_id = ?');
     $req_stmt->execute([$part_id]);
     $existing_requirements = $req_stmt->fetchAll();
+    $sys_stmt = $pdo->prepare('SELECT system FROM door_part_systems WHERE part_id = ?');
+    $sys_stmt->execute([$part_id]);
+    $existing_systems = $sys_stmt->fetchAll(PDO::FETCH_COLUMN);
     $edit_mode = true;
 }
 ?>
@@ -152,8 +168,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </select>
                             </div>
                             <div class='mb-3'>
-                                <label class='form-label'>System</label>
-                                <select class='form-select' name='system' id='system' required disabled data-current='<?php echo htmlspecialchars($part_data['system'] ?? ''); ?>'>
+                                <label class='form-label'>Systems</label>
+                                <select class='form-select' name='systems[]' id='system' multiple required disabled data-current='<?php echo htmlspecialchars(json_encode($existing_systems)); ?>'>
                                     <option value=''>Select Manufacturer First</option>
                                 </select>
                             </div>
@@ -254,8 +270,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     .then(html => {
                                         systemSelect.innerHTML = html;
                                         systemSelect.disabled = false;
-                                        if (editMode && currentSystem) {
-                                            systemSelect.value = currentSystem;
+                                        if (editMode && currentSystems.length) {
+                                            currentSystems.forEach(function(sys) {
+                                                var option = Array.from(systemSelect.options).find(o => o.value === sys);
+                                                if (option) option.selected = true;
+                                            });
                                         }
                                     });
                             }
@@ -269,7 +288,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             document.getElementById('manufacturer').addEventListener('change', loadSystems);
                             document.getElementById('category').addEventListener('change', loadCategoryFields);
                             var editMode = <?php echo $edit_mode ? 'true' : 'false'; ?>;
-                            var currentSystem = <?php echo json_encode($part_data['system'] ?? ''); ?>;
+                            var currentSystems = <?php echo json_encode($existing_systems); ?>;
                             var currentLx = <?php echo json_encode($part_data['lx'] ?? ''); ?>;
                             var currentLy = <?php echo json_encode($part_data['ly'] ?? ''); ?>;
                             var currentLz = <?php echo json_encode($part_data['lz'] ?? ''); ?>;
