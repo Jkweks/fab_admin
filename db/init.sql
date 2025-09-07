@@ -90,6 +90,12 @@ CREATE TABLE IF NOT EXISTS door_part_functions (
     PRIMARY KEY (part_id, function)
 );
 
+CREATE TABLE IF NOT EXISTS door_part_systems (
+    part_id INTEGER REFERENCES door_parts(id) ON DELETE CASCADE,
+    system VARCHAR(255) NOT NULL,
+    PRIMARY KEY (part_id, system)
+);
+
 CREATE TABLE IF NOT EXISTS door_part_requirements (
     id SERIAL PRIMARY KEY,
     part_id INTEGER REFERENCES door_parts(id) ON DELETE CASCADE,
