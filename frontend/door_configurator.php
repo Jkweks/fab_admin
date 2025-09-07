@@ -230,7 +230,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select' name='hinge_rail'>
                                             <option value=''>Select Hinge Rail</option>
                                             <?php foreach ($hinge_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['hinge_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['hinge_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -239,7 +239,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select' name='lock_rail'>
                                             <option value=''>Select Lock Rail</option>
                                             <?php foreach ($lock_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['lock_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['lock_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -248,7 +248,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select' name='top_rail'>
                                             <option value=''>Select Top Rail</option>
                                             <?php foreach ($top_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['top_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['top_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -257,7 +257,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select' name='bottom_rail'>
                                             <option value=''>Select Bottom Rail</option>
                                             <?php foreach ($bottom_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['bottom_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['bottom_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -268,7 +268,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                             <select class='form-select' name='hinge_rail_2'>
                                                 <option value=''>Select Hinge Rail</option>
                                                 <?php foreach ($hinge_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['hinge_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['hinge_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -277,7 +277,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                             <select class='form-select' name='lock_rail_2'>
                                                 <option value=''>Select Lock Rail</option>
                                                 <?php foreach ($lock_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['lock_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['lock_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -286,7 +286,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                             <select class='form-select' name='top_rail_2'>
                                                 <option value=''>Select Top Rail</option>
                                                 <?php foreach ($top_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['top_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['top_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -295,7 +295,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                             <select class='form-select' name='bottom_rail_2'>
                                                 <option value=''>Select Bottom Rail</option>
                                                 <?php foreach ($bottom_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' <?php if (($config['bottom_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['bottom_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -324,7 +324,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='hinge_jamb'>
                                             <option value=''>Select Hinge Jamb</option>
                                             <?php foreach ($hinge_jamb_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -333,7 +333,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='lock_jamb'>
                                             <option value=''>Select Lock Jamb</option>
                                             <?php foreach ($lock_jamb_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -342,7 +342,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='rh_hinge_jamb'>
                                             <option value=''>Select RH Hinge Jamb</option>
                                             <?php foreach ($rh_hinge_jamb_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -351,7 +351,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='lh_hinge_jamb'>
                                             <option value=''>Select LH Hinge Jamb</option>
                                             <?php foreach ($lh_hinge_jamb_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -360,7 +360,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='door_header'>
                                             <option value=''>Select Door Header</option>
                                             <?php foreach ($door_header_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -369,7 +369,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='transom_header'>
                                             <option value=''>Select Transom Header</option>
                                             <?php foreach ($transom_header_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -378,7 +378,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='hinge_door_stop'>
                                             <option value=''>Select Hinge Door Stop</option>
                                             <?php foreach ($hinge_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -387,7 +387,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='latch_door_stop'>
                                             <option value=''>Select Latch Door Stop</option>
                                             <?php foreach ($latch_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -396,7 +396,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='head_door_stop'>
                                             <option value=''>Select Head Door Stop</option>
                                             <?php foreach ($head_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -405,7 +405,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='horizontal_transom_gutter'>
                                             <option value=''>Select Horizontal Transom Gutter</option>
                                             <?php foreach ($horizontal_transom_gutter_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -414,7 +414,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='horizontal_transom_stop'>
                                             <option value=''>Select Horizontal Transom Stop</option>
                                             <?php foreach ($horizontal_transom_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -423,7 +423,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='vertical_transom_gutter'>
                                             <option value=''>Select Vertical Transom Gutter</option>
                                             <?php foreach ($vertical_transom_gutter_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -432,7 +432,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='vertical_transom_stop'>
                                             <option value=''>Select Vertical Transom Stop</option>
                                             <?php foreach ($vertical_transom_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -441,7 +441,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='head_transom_stop'>
                                             <option value=''>Select Head Transom Stop</option>
                                             <?php foreach ($head_transom_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -450,7 +450,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='transom_head_perimeter_filler'>
                                             <option value=''>Select Transom Head Perimeter Filler</option>
                                             <?php foreach ($transom_head_perimeter_filler_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -485,6 +485,11 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <p><strong>Second Lock Rail:</strong> <span id='summary-lock2'></span></p>
                                         <p><strong>Second Top Rail:</strong> <span id='summary-top2'></span></p>
                                         <p><strong>Second Bottom Rail:</strong> <span id='summary-bottom2'></span></p>
+                                        <h6 class='mt-4'>Parts Summary</h6>
+                                        <table class='table'>
+                                            <thead><tr><th>Type</th><th>Part Number</th><th>Description</th><th>Qty</th></tr></thead>
+                                            <tbody id='summary-parts-body'></tbody>
+                                        </table>
                                     </div>
                                     <button type='submit' class='btn btn-primary'>Save Door</button>
                                 </div>
@@ -637,7 +642,7 @@ document.getElementById('save_settings').addEventListener('click', function(){
 });
 
 var summaryTab = document.getElementById('summary-tab');
-summaryTab.addEventListener('shown.bs.tab', function () {
+summaryTab.addEventListener('shown.bs.tab', async function () {
     var wo = document.querySelector("select[name='work_order']");
     document.getElementById('summary-workorder').textContent = wo.value ? wo.options[wo.selectedIndex].text : '';
     document.getElementById('summary-name').textContent = document.querySelector("input[name='name']").value;
@@ -662,6 +667,44 @@ summaryTab.addEventListener('shown.bs.tab', function () {
     document.getElementById('summary-lock2').textContent = selText('lock_rail_2');
     document.getElementById('summary-top2').textContent = selText('top_rail_2');
     document.getElementById('summary-bottom2').textContent = selText('bottom_rail_2');
+
+    var parts = [];
+    function collect(container){
+        document.querySelectorAll(container + ' select').forEach(function(sel){
+            if(sel.value){
+                var opt = sel.selectedOptions[0];
+                var pn = opt.dataset.partNumber;
+                if(pn){
+                    parts.push({id: sel.value, part_number: pn, type: opt.dataset.category, description: opt.text, quantity:1});
+                }
+            }
+        });
+    }
+    collect('#parts');
+    collect('#frame');
+    var base = parts.slice();
+    await Promise.all(base.map(function(p){
+        return fetch('get_required_parts.php?id=' + encodeURIComponent(p.id))
+            .then(r => r.json())
+            .then(function(reqs){
+                reqs.forEach(function(r){
+                    parts.push({id:r.id, part_number:r.part_number, type:r.category, description:r.manufacturer + ' ' + r.system + ' ' + r.part_number, quantity:r.quantity});
+                });
+            });
+    }));
+    var grouped = {};
+    parts.forEach(function(p){
+        if(!grouped[p.part_number]){
+            grouped[p.part_number] = {part_number:p.part_number, description:p.description, type:p.type, quantity:0};
+        }
+        grouped[p.part_number].quantity += p.quantity;
+    });
+    var rows = Object.values(grouped).sort(function(a,b){
+        return a.type.localeCompare(b.type) || a.part_number.localeCompare(b.part_number);
+    }).map(function(p){
+        return '<tr><td>' + (p.type.charAt(0).toUpperCase() + p.type.slice(1)) + '</td><td>' + p.part_number + '</td><td>' + p.description + '</td><td>' + p.quantity + '</td></tr>';
+    }).join('');
+    document.getElementById('summary-parts-body').innerHTML = rows;
 });
 
 var cutlistTab = document.getElementById('cutlist-tab');
@@ -732,12 +775,14 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
         var vertStopSel = document.querySelector("select[name='vertical_transom_stop']");
         var vertGutterSel = document.querySelector("select[name='vertical_transom_gutter']");
         var headTransomStopSel = document.querySelector("select[name='head_transom_stop']");
+        var transomHeadFillerSel = document.querySelector("select[name='transom_head_perimeter_filler']");
         var horizStopLy = parseFloat(horizStopSel && horizStopSel.selectedOptions.length ? horizStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
         var headTransomStopLy = parseFloat(headTransomStopSel && headTransomStopSel.selectedOptions.length ? headTransomStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
         var verticalLen = frameHeight - height - doorHeadLy - horizStopLy - headTransomStopLy;
         addIf(horizStopSel, 'Horizontal Transom Stop', width);
         addIf(horizGutterSel, 'Horizontal Transom Gutter', width);
         addIf(headTransomStopSel, 'Head Transom Stop', width);
+        addIf(transomHeadFillerSel, 'Transom Head Perimeter Filler', width);
         addIf(vertStopSel, 'Vertical Transom Stop', verticalLen);
         addIf(vertGutterSel, 'Vertical Transom Gutter', verticalLen);
     }
