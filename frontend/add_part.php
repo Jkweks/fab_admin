@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lx = $ly = $lz = null;
     $function = null;
     $functions_selected = [];
-    $usage = $_POST['usage'] ?? null;
     $systems = isset($_POST['systems']) ? $_POST['systems'] : [];
     $primary_system = $systems[0] ?? null;
 
@@ -74,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($_POST['id'])) {
         $part_id = $_POST['id'];
-        $stmt = $pdo->prepare('UPDATE door_parts SET manufacturer = ?, system = ?, part_number = ?, lx = ?, ly = ?, lz = ?, function = ?, category = ?, usage = ? WHERE id = ?');
+        $stmt = $pdo->prepare('UPDATE door_parts SET manufacturer = ?, system = ?, part_number = ?, lx = ?, ly = ?, lz = ?, function = ?, category = ?, usage = NULL WHERE id = ?');
         $stmt->execute([
             $_POST['manufacturer'],
             $primary_system,
@@ -84,14 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lz,
             $function,
             $category,
-            $usage,
             $part_id
         ]);
         $pdo->prepare('DELETE FROM door_part_functions WHERE part_id = ?')->execute([$part_id]);
         $pdo->prepare('DELETE FROM door_part_requirements WHERE part_id = ?')->execute([$part_id]);
         $pdo->prepare('DELETE FROM door_part_systems WHERE part_id = ?')->execute([$part_id]);
     } else {
-        $stmt = $pdo->prepare('INSERT INTO door_parts (manufacturer, system, part_number, lx, ly, lz, function, category, usage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt = $pdo->prepare('INSERT INTO door_parts (manufacturer, system, part_number, lx, ly, lz, function, category, usage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)');
         $stmt->execute([
             $_POST['manufacturer'],
             $primary_system,
@@ -100,8 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ly,
             $lz,
             $function,
-            $category,
-            $usage
+            $category
         ]);
         $part_id = $pdo->lastInsertId();
     }
@@ -249,10 +246,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                         if (option) option.selected = true;
                                                     });
                                                 }
-                                                var uSelect = document.querySelector('select[name="usage"]');
-                                                if (uSelect && currentUsage) {
-                                                    uSelect.value = currentUsage;
-                                                }
                                             }
                                         }
                                     });
@@ -293,7 +286,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             var currentLy = <?php echo json_encode($part_data['ly'] ?? ''); ?>;
                             var currentLz = <?php echo json_encode($part_data['lz'] ?? ''); ?>;
                             var currentFunctions = <?php echo json_encode($existing_functions); ?>;
-                            var currentUsage = <?php echo json_encode($part_data['usage'] ?? ''); ?>;
                             loadSystems();
                             loadCategoryFields();
                         </script>

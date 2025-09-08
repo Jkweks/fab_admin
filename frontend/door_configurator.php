@@ -18,7 +18,7 @@ if ($config_id) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $config_id = $_POST['id'] ?? null;
     if ($config_id) {
-        $stmt = $pdo->prepare('UPDATE door_configurations SET name=?, has_transom=?, opening_width=?, opening_height=?, frame_height=?, glazing_thickness=?, hinge_rail_id=?, lock_rail_id=?, top_rail_id=?, bottom_rail_id=?, top_gap=?, bottom_gap=?, hinge_gap=?, latch_gap=?, handing=?, hinge_rail_2_id=?, lock_rail_2_id=?, top_rail_2_id=?, bottom_rail_2_id=? WHERE id=?');
+        $stmt = $pdo->prepare('UPDATE door_configurations SET name=?, has_transom=?, opening_width=?, opening_height=?, frame_height=?, glazing_thickness=?, hinge_rail_id=?, lock_rail_id=?, top_rail_id=?, bottom_rail_id=?, top_gap=?, bottom_gap=?, hinge_gap=?, latch_gap=?, handing=?, hinge_rail_2_id=?, lock_rail_2_id=?, top_rail_2_id=?, bottom_rail_2_id=?, frame_system=?, frame_finish=?, hinge_jamb_id=?, lock_jamb_id=?, rh_hinge_jamb_id=?, lh_hinge_jamb_id=?, door_header_id=?, transom_header_id=?, hinge_door_stop_id=?, latch_door_stop_id=?, horizontal_transom_gutter_id=?, horizontal_transom_stop_id=?, vertical_transom_gutter_id=?, vertical_transom_stop_id=?, head_transom_stop_id=?, transom_head_perimeter_filler_id=? WHERE id=?');
         $stmt->execute([
             $_POST['name'],
             isset($_POST['has_transom']) ? 1 : 0,
@@ -39,13 +39,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['lock_rail_2'] !== '' ? $_POST['lock_rail_2'] : null,
             $_POST['top_rail_2'] !== '' ? $_POST['top_rail_2'] : null,
             $_POST['bottom_rail_2'] !== '' ? $_POST['bottom_rail_2'] : null,
+            $_POST['frame_system'] !== '' ? $_POST['frame_system'] : null,
+            $_POST['frame_finish'] !== '' ? $_POST['frame_finish'] : null,
+            $_POST['hinge_jamb'] !== '' ? $_POST['hinge_jamb'] : null,
+            $_POST['lock_jamb'] !== '' ? $_POST['lock_jamb'] : null,
+            $_POST['rh_hinge_jamb'] !== '' ? $_POST['rh_hinge_jamb'] : null,
+            $_POST['lh_hinge_jamb'] !== '' ? $_POST['lh_hinge_jamb'] : null,
+            $_POST['door_header'] !== '' ? $_POST['door_header'] : null,
+            $_POST['transom_header'] !== '' ? $_POST['transom_header'] : null,
+            $_POST['hinge_door_stop'] !== '' ? $_POST['hinge_door_stop'] : null,
+            $_POST['latch_door_stop'] !== '' ? $_POST['latch_door_stop'] : null,
+            $_POST['horizontal_transom_gutter'] !== '' ? $_POST['horizontal_transom_gutter'] : null,
+            $_POST['horizontal_transom_stop'] !== '' ? $_POST['horizontal_transom_stop'] : null,
+            $_POST['vertical_transom_gutter'] !== '' ? $_POST['vertical_transom_gutter'] : null,
+            $_POST['vertical_transom_stop'] !== '' ? $_POST['vertical_transom_stop'] : null,
+            $_POST['head_transom_stop'] !== '' ? $_POST['head_transom_stop'] : null,
+            $_POST['transom_head_perimeter_filler'] !== '' ? $_POST['transom_head_perimeter_filler'] : null,
             $config_id
         ]);
         $cfg_stmt = $pdo->prepare("SELECT dc.*, wo.job_id, jobs.job_name, wo.work_order_number FROM door_configurations dc JOIN work_orders wo ON dc.work_order_id = wo.id JOIN jobs ON wo.job_id = jobs.id WHERE dc.id=?");
         $cfg_stmt->execute([$config_id]);
         $config = $cfg_stmt->fetch();
     } else {
-        $stmt = $pdo->prepare('INSERT INTO door_configurations (work_order_id, name, has_transom, opening_width, opening_height, frame_height, glazing_thickness, hinge_rail_id, lock_rail_id, top_rail_id, bottom_rail_id, top_gap, bottom_gap, hinge_gap, latch_gap, handing, hinge_rail_2_id, lock_rail_2_id, top_rail_2_id, bottom_rail_2_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id');
+        $stmt = $pdo->prepare('INSERT INTO door_configurations (work_order_id, name, has_transom, opening_width, opening_height, frame_height, glazing_thickness, hinge_rail_id, lock_rail_id, top_rail_id, bottom_rail_id, top_gap, bottom_gap, hinge_gap, latch_gap, handing, hinge_rail_2_id, lock_rail_2_id, top_rail_2_id, bottom_rail_2_id, frame_system, frame_finish, hinge_jamb_id, lock_jamb_id, rh_hinge_jamb_id, lh_hinge_jamb_id, door_header_id, transom_header_id, hinge_door_stop_id, latch_door_stop_id, horizontal_transom_gutter_id, horizontal_transom_stop_id, vertical_transom_gutter_id, vertical_transom_stop_id, head_transom_stop_id, transom_head_perimeter_filler_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id');
         $stmt->execute([
             $_POST['work_order'],
             $_POST['name'],
@@ -66,7 +82,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['hinge_rail_2'] !== '' ? $_POST['hinge_rail_2'] : null,
             $_POST['lock_rail_2'] !== '' ? $_POST['lock_rail_2'] : null,
             $_POST['top_rail_2'] !== '' ? $_POST['top_rail_2'] : null,
-            $_POST['bottom_rail_2'] !== '' ? $_POST['bottom_rail_2'] : null
+            $_POST['bottom_rail_2'] !== '' ? $_POST['bottom_rail_2'] : null,
+            $_POST['frame_system'] !== '' ? $_POST['frame_system'] : null,
+            $_POST['frame_finish'] !== '' ? $_POST['frame_finish'] : null,
+            $_POST['hinge_jamb'] !== '' ? $_POST['hinge_jamb'] : null,
+            $_POST['lock_jamb'] !== '' ? $_POST['lock_jamb'] : null,
+            $_POST['rh_hinge_jamb'] !== '' ? $_POST['rh_hinge_jamb'] : null,
+            $_POST['lh_hinge_jamb'] !== '' ? $_POST['lh_hinge_jamb'] : null,
+            $_POST['door_header'] !== '' ? $_POST['door_header'] : null,
+            $_POST['transom_header'] !== '' ? $_POST['transom_header'] : null,
+            $_POST['hinge_door_stop'] !== '' ? $_POST['hinge_door_stop'] : null,
+            $_POST['latch_door_stop'] !== '' ? $_POST['latch_door_stop'] : null,
+            $_POST['horizontal_transom_gutter'] !== '' ? $_POST['horizontal_transom_gutter'] : null,
+            $_POST['horizontal_transom_stop'] !== '' ? $_POST['horizontal_transom_stop'] : null,
+            $_POST['vertical_transom_gutter'] !== '' ? $_POST['vertical_transom_gutter'] : null,
+            $_POST['vertical_transom_stop'] !== '' ? $_POST['vertical_transom_stop'] : null,
+            $_POST['head_transom_stop'] !== '' ? $_POST['head_transom_stop'] : null,
+            $_POST['transom_head_perimeter_filler'] !== '' ? $_POST['transom_head_perimeter_filler'] : null
         ]);
         $config_id = $stmt->fetchColumn();
         $cfg_stmt = $pdo->prepare("SELECT dc.*, wo.job_id, jobs.job_name, wo.work_order_number FROM door_configurations dc JOIN work_orders wo ON dc.work_order_id = wo.id JOIN jobs ON wo.job_id = jobs.id WHERE dc.id=?");
@@ -84,13 +116,10 @@ $systems = $pdo->query("SELECT m.name AS manufacturer, s.name AS system FROM sys
 
 $hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $lock_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$rh_hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'rh_hinge_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$lh_hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lh_hinge_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$door_header_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'door_header' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$door_header_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'door_header' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $transom_header_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'transom_header' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $hinge_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $latch_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'latch_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$head_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'head_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $horizontal_transom_gutter_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'horizontal_transom_gutter' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $horizontal_transom_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'horizontal_transom_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $vertical_transom_gutter_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'vertical_transom_gutter' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
@@ -314,9 +343,9 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                     <div class='mb-3'>
                                         <label class='form-label'>Finish</label>
                                         <select class='form-select' name='frame_finish'>
-                                            <option value='c2'>C2</option>
-                                            <option value='db'>DB</option>
-                                            <option value='bl'>BL</option>
+                                            <option value='c2' <?php if (($config['frame_finish'] ?? '') === 'c2') echo 'selected'; ?>>C2</option>
+                                            <option value='db' <?php if (($config['frame_finish'] ?? '') === 'db') echo 'selected'; ?>>DB</option>
+                                            <option value='bl' <?php if (($config['frame_finish'] ?? '') === 'bl') echo 'selected'; ?>>BL</option>
                                         </select>
                                     </div>
                                     <div class='mb-3 single-only'>
@@ -324,7 +353,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='hinge_jamb'>
                                             <option value=''>Select Hinge Jamb</option>
                                             <?php foreach ($hinge_jamb_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['hinge_jamb_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -333,7 +362,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='lock_jamb'>
                                             <option value=''>Select Lock Jamb</option>
                                             <?php foreach ($lock_jamb_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['lock_jamb_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -341,8 +370,8 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <label class='form-label'>RH Hinge Jamb</label>
                                         <select class='form-select frame-part-select' name='rh_hinge_jamb'>
                                             <option value=''>Select RH Hinge Jamb</option>
-                                            <?php foreach ($rh_hinge_jamb_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                            <?php foreach ($hinge_jamb_parts as $part): ?>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['rh_hinge_jamb_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -350,8 +379,8 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <label class='form-label'>LH Hinge Jamb</label>
                                         <select class='form-select frame-part-select' name='lh_hinge_jamb'>
                                             <option value=''>Select LH Hinge Jamb</option>
-                                            <?php foreach ($lh_hinge_jamb_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                            <?php foreach ($hinge_jamb_parts as $part): ?>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['lh_hinge_jamb_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -360,7 +389,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='door_header'>
                                             <option value=''>Select Door Header</option>
                                             <?php foreach ($door_header_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['door_header_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -368,35 +397,26 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <label class='form-label'>Transom Header</label>
                                         <select class='form-select frame-part-select' name='transom_header'>
                                             <option value=''>Select Transom Header</option>
-                                            <?php foreach ($transom_header_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                            <?php endforeach; ?>
+        <?php foreach ($transom_header_parts as $part): ?>
+            <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['transom_header_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+        <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <div class='mb-3'>
-                                        <label class='form-label'>Hinge Door Stop</label>
+                                        <label class='form-label' id='hinge_stop_label'>Hinge Door Stop</label>
                                         <select class='form-select frame-part-select' name='hinge_door_stop'>
-                                            <option value=''>Select Hinge Door Stop</option>
+                                            <option value='' id='hinge_stop_option'>Select Hinge Door Stop</option>
                                             <?php foreach ($hinge_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['hinge_door_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <div class='mb-3'>
-                                        <label class='form-label'>Latch Door Stop</label>
+                                        <label class='form-label' id='latch_stop_label'>Latch Door Stop</label>
                                         <select class='form-select frame-part-select' name='latch_door_stop'>
-                                            <option value=''>Select Latch Door Stop</option>
+                                            <option value='' id='latch_stop_option'>Select Latch Door Stop</option>
                                             <?php foreach ($latch_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class='mb-3'>
-                                        <label class='form-label'>Head Door Stop</label>
-                                        <select class='form-select frame-part-select' name='head_door_stop'>
-                                            <option value=''>Select Head Door Stop</option>
-                                            <?php foreach ($head_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['latch_door_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -405,7 +425,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='horizontal_transom_gutter'>
                                             <option value=''>Select Horizontal Transom Gutter</option>
                                             <?php foreach ($horizontal_transom_gutter_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['horizontal_transom_gutter_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -414,7 +434,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='horizontal_transom_stop'>
                                             <option value=''>Select Horizontal Transom Stop</option>
                                             <?php foreach ($horizontal_transom_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['horizontal_transom_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -423,7 +443,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='vertical_transom_gutter'>
                                             <option value=''>Select Vertical Transom Gutter</option>
                                             <?php foreach ($vertical_transom_gutter_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['vertical_transom_gutter_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -432,7 +452,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='vertical_transom_stop'>
                                             <option value=''>Select Vertical Transom Stop</option>
                                             <?php foreach ($vertical_transom_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['vertical_transom_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -441,7 +461,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='head_transom_stop'>
                                             <option value=''>Select Head Transom Stop</option>
                                             <?php foreach ($head_transom_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['head_transom_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -450,7 +470,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='transom_head_perimeter_filler'>
                                             <option value=''>Select Transom Head Perimeter Filler</option>
                                             <?php foreach ($transom_head_perimeter_filler_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['transom_head_perimeter_filler_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -567,6 +587,10 @@ document.getElementById('job_select').addEventListener('change', function() {
 });
 
 var handingSelect = document.getElementById('handing');
+var hingeStopLabelEl = document.getElementById('hinge_stop_label');
+var latchStopLabelEl = document.getElementById('latch_stop_label');
+var hingeStopOptionEl = document.getElementById('hinge_stop_option');
+var latchStopOptionEl = document.getElementById('latch_stop_option');
 function updateHanding() {
     var isPair = handingSelect.value.startsWith('pair');
     document.getElementById('second_leaf').style.display = isPair ? 'block' : 'none';
@@ -576,6 +600,17 @@ function updateHanding() {
     document.querySelectorAll('.pair-only').forEach(function(el){
         el.style.display = isPair ? '' : 'none';
     });
+    if (isPair) {
+        hingeStopLabelEl.textContent = 'RH Hinge Stop';
+        hingeStopOptionEl.textContent = 'Select RH Hinge Stop';
+        latchStopLabelEl.textContent = 'LH Hinge Stop';
+        latchStopOptionEl.textContent = 'Select LH Hinge Stop';
+    } else {
+        hingeStopLabelEl.textContent = 'Hinge Door Stop';
+        hingeStopOptionEl.textContent = 'Select Hinge Door Stop';
+        latchStopLabelEl.textContent = 'Latch Door Stop';
+        latchStopOptionEl.textContent = 'Select Latch Door Stop';
+    }
 }
 handingSelect.addEventListener('change', updateHanding);
 
@@ -711,6 +746,7 @@ var cutlistTab = document.getElementById('cutlist-tab');
 cutlistTab.addEventListener('shown.bs.tab', function(){
     var width = parseFloat(document.querySelector("input[name='opening_width']").value) || 0;
     var height = parseFloat(document.querySelector("input[name='opening_height']").value) || 0;
+    var isPair = document.getElementById('handing').value.startsWith('pair');
     var topGap = parseFloat(document.getElementById('top_gap').value) || 0;
     var bottomGap = parseFloat(document.getElementById('bottom_gap').value) || 0;
     var hingeGap = parseFloat(document.getElementById('hinge_gap').value) || 0;
@@ -749,7 +785,8 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
 
     var doorHeadSelect = document.querySelector("select[name='door_header']");
     var doorHeadLy = parseFloat(doorHeadSelect && doorHeadSelect.selectedOptions.length ? doorHeadSelect.selectedOptions[0].dataset.ly || 0 : 0) || 0;
-    var jambLength = hasTransom ? frameHeight : (height + doorHeadLy);
+    var doorHeadLz = parseFloat(doorHeadSelect && doorHeadSelect.selectedOptions.length ? doorHeadSelect.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+    var jambLength = hasTransom ? frameHeight : (height + doorHeadLz);
     function addIf(sel, label, len){
         if(sel && sel.value && !isNaN(len)){
             body.innerHTML += '<tr><td>' + label + '</td><td>' + len.toFixed(3) + '</td></tr>';
@@ -763,12 +800,10 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
     var jambStopLength = height;
     var hingeStopSel = document.querySelector("select[name='hinge_door_stop']");
     var lockStopSel = document.querySelector("select[name='latch_door_stop']");
-    var hingeStopLy = parseFloat(hingeStopSel && hingeStopSel.selectedOptions.length ? hingeStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
-    var lockStopLy = parseFloat(lockStopSel && lockStopSel.selectedOptions.length ? lockStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
-    addIf(hingeStopSel, 'Hinge Jamb Stop', jambStopLength);
-    addIf(lockStopSel, 'Lock Jamb Stop', jambStopLength);
-    var headStopLen = width - lockStopLy - hingeStopLy;
-    addIf(document.querySelector("select[name='head_door_stop']"), 'Head Door Stop', headStopLen);
+    var hingeStopLabel = isPair ? 'RH Hinge Stop' : 'Hinge Door Stop';
+    var lockStopLabel = isPair ? 'LH Hinge Stop' : 'Latch Door Stop';
+    addIf(hingeStopSel, hingeStopLabel, jambStopLength);
+    addIf(lockStopSel, lockStopLabel, jambStopLength);
     if(hasTransom){
         var horizStopSel = document.querySelector("select[name='horizontal_transom_stop']");
         var horizGutterSel = document.querySelector("select[name='horizontal_transom_gutter']");
