@@ -241,15 +241,6 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                 </div>
                                 <div class='tab-pane fade' id='parts' role='tabpanel'>
                                     <div class='mb-3'>
-                                        <label class='form-label'>Preset</label>
-                                        <select class='form-select' id='preset_select'>
-                                            <option value=''>Select Preset</option>
-                                            <?php foreach ($part_presets as $preset): ?>
-                                                <option value='<?php echo htmlspecialchars($preset['id']); ?>' data-hinge='<?php echo htmlspecialchars($preset['hinge_rail_id']); ?>' data-lock='<?php echo htmlspecialchars($preset['lock_rail_id']); ?>' data-top='<?php echo htmlspecialchars($preset['top_rail_id']); ?>' data-bottom='<?php echo htmlspecialchars($preset['bottom_rail_id']); ?>'><?php echo htmlspecialchars($preset['name']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class='mb-3'>
                                         <label class='form-label'>Finish</label>
                                         <select class='form-select' name='door_finish'>
                                             <option value='c2' <?php if (($config['door_finish'] ?? '')==='c2') echo 'selected'; ?>>C2</option>
@@ -257,79 +248,108 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                             <option value='bl' <?php if (($config['door_finish'] ?? '')==='bl') echo 'selected'; ?>>BL</option>
                                         </select>
                                     </div>
-                                    <div class='mb-3'>
-                                        <label class='form-label'>Hinge Rail</label>
-                                        <select class='form-select' name='hinge_rail'>
-                                            <option value=''>Select Hinge Rail</option>
-                                            <?php foreach ($hinge_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['hinge_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class='mb-3'>
-                                        <label class='form-label'>Lock Rail</label>
-                                        <select class='form-select' name='lock_rail'>
-                                            <option value=''>Select Lock Rail</option>
-                                            <?php foreach ($lock_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['lock_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class='mb-3'>
-                                        <label class='form-label'>Top Rail</label>
-                                        <select class='form-select' name='top_rail'>
-                                            <option value=''>Select Top Rail</option>
-                                            <?php foreach ($top_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['top_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class='mb-3'>
-                                        <label class='form-label'>Bottom Rail</label>
-                                        <select class='form-select' name='bottom_rail'>
-                                            <option value=''>Select Bottom Rail</option>
-                                            <?php foreach ($bottom_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['bottom_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div id='second_leaf' style='display:none'>
-                                        <h6>Second Leaf</h6>
-                                        <div class='mb-3'>
-                                            <label class='form-label'>Hinge Rail (2)</label>
-                                            <select class='form-select' name='hinge_rail_2'>
-                                                <option value=''>Select Hinge Rail</option>
-                                                <?php foreach ($hinge_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['hinge_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                    <ul class='nav nav-tabs' id='doorLeafTabs' role='tablist'>
+                                        <li class='nav-item' role='presentation'>
+                                            <button class='nav-link active' id='active-door-tab' data-bs-toggle='tab' data-bs-target='#active-door' type='button' role='tab'>Active Door</button>
+                                        </li>
+                                        <li class='nav-item' role='presentation' id='inactive-door-tab-item' style='display:none;'>
+                                            <button class='nav-link' id='inactive-door-tab' data-bs-toggle='tab' data-bs-target='#inactive-door' type='button' role='tab'>Inactive Door</button>
+                                        </li>
+                                    </ul>
+                                    <div class='tab-content pt-3'>
+                                        <div class='tab-pane fade show active' id='active-door' role='tabpanel'>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Preset</label>
+                                                <select class='form-select' id='preset_select'>
+                                                    <option value=''>Select Preset</option>
+                                                    <?php foreach ($part_presets as $preset): ?>
+                                                        <option value='<?php echo htmlspecialchars($preset['id']); ?>' data-hinge='<?php echo htmlspecialchars($preset['hinge_rail_id']); ?>' data-lock='<?php echo htmlspecialchars($preset['lock_rail_id']); ?>' data-top='<?php echo htmlspecialchars($preset['top_rail_id']); ?>' data-bottom='<?php echo htmlspecialchars($preset['bottom_rail_id']); ?>'><?php echo htmlspecialchars($preset['name']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Hinge Rail</label>
+                                                <select class='form-select' name='hinge_rail'>
+                                                    <option value=''>Select Hinge Rail</option>
+                                                    <?php foreach ($hinge_parts as $part): ?>
+                                                        <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['hinge_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Lock Rail</label>
+                                                <select class='form-select' name='lock_rail'>
+                                                    <option value=''>Select Lock Rail</option>
+                                                    <?php foreach ($lock_parts as $part): ?>
+                                                        <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['lock_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Top Rail</label>
+                                                <select class='form-select' name='top_rail'>
+                                                    <option value=''>Select Top Rail</option>
+                                                    <?php foreach ($top_parts as $part): ?>
+                                                        <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['top_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Bottom Rail</label>
+                                                <select class='form-select' name='bottom_rail'>
+                                                    <option value=''>Select Bottom Rail</option>
+                                                    <?php foreach ($bottom_parts as $part): ?>
+                                                        <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['bottom_rail_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class='mb-3'>
-                                            <label class='form-label'>Lock Rail (2)</label>
-                                            <select class='form-select' name='lock_rail_2'>
-                                                <option value=''>Select Lock Rail</option>
-                                                <?php foreach ($lock_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['lock_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                        <div class='mb-3'>
-                                            <label class='form-label'>Top Rail (2)</label>
-                                            <select class='form-select' name='top_rail_2'>
-                                                <option value=''>Select Top Rail</option>
-                                                <?php foreach ($top_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['top_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                        <div class='mb-3'>
-                                            <label class='form-label'>Bottom Rail (2)</label>
-                                            <select class='form-select' name='bottom_rail_2'>
-                                                <option value=''>Select Bottom Rail</option>
-                                                <?php foreach ($bottom_parts as $part): ?>
-                                                    <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['bottom_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                        <div class='tab-pane fade' id='inactive-door' role='tabpanel'>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Preset</label>
+                                                <select class='form-select' id='preset_select_2'>
+                                                    <option value=''>Select Preset</option>
+                                                    <?php foreach ($part_presets as $preset): ?>
+                                                        <option value='<?php echo htmlspecialchars($preset['id']); ?>' data-hinge='<?php echo htmlspecialchars($preset['hinge_rail_id']); ?>' data-lock='<?php echo htmlspecialchars($preset['lock_rail_id']); ?>' data-top='<?php echo htmlspecialchars($preset['top_rail_id']); ?>' data-bottom='<?php echo htmlspecialchars($preset['bottom_rail_id']); ?>'><?php echo htmlspecialchars($preset['name']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Hinge Rail</label>
+                                                <select class='form-select' name='hinge_rail_2'>
+                                                    <option value=''>Select Hinge Rail</option>
+                                                    <?php foreach ($hinge_parts as $part): ?>
+                                                        <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['hinge_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Lock Rail</label>
+                                                <select class='form-select' name='lock_rail_2'>
+                                                    <option value=''>Select Lock Rail</option>
+                                                    <?php foreach ($lock_parts as $part): ?>
+                                                        <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['lock_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Top Rail</label>
+                                                <select class='form-select' name='top_rail_2'>
+                                                    <option value=''>Select Top Rail</option>
+                                                    <?php foreach ($top_parts as $part): ?>
+                                                        <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['top_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label class='form-label'>Bottom Rail</label>
+                                                <select class='form-select' name='bottom_rail_2'>
+                                                    <option value=''>Select Bottom Rail</option>
+                                                    <?php foreach ($bottom_parts as $part): ?>
+                                                        <option value='<?php echo htmlspecialchars($part['id']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='door' <?php if (($config['bottom_rail_2_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -513,10 +533,10 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <p><strong>Lock Rail:</strong> <span id='summary-lock'></span></p>
                                         <p><strong>Top Rail:</strong> <span id='summary-top'></span></p>
                                         <p><strong>Bottom Rail:</strong> <span id='summary-bottom'></span></p>
-                                        <p><strong>Second Hinge Rail:</strong> <span id='summary-hinge2'></span></p>
-                                        <p><strong>Second Lock Rail:</strong> <span id='summary-lock2'></span></p>
-                                        <p><strong>Second Top Rail:</strong> <span id='summary-top2'></span></p>
-                                        <p><strong>Second Bottom Rail:</strong> <span id='summary-bottom2'></span></p>
+                                        <p class='pair-only'><strong>Inactive Hinge Rail:</strong> <span id='summary-hinge2'></span></p>
+                                        <p class='pair-only'><strong>Inactive Lock Rail:</strong> <span id='summary-lock2'></span></p>
+                                        <p class='pair-only'><strong>Inactive Top Rail:</strong> <span id='summary-top2'></span></p>
+                                        <p class='pair-only'><strong>Inactive Bottom Rail:</strong> <span id='summary-bottom2'></span></p>
                                         <h6 class='mt-4'>Parts Summary</h6>
                                         <table class='table'>
                                             <thead><tr><th>Type</th><th>Part Number</th><th>Description</th><th>Qty</th><th>Stock Lengths</th></tr></thead>
@@ -603,9 +623,15 @@ var hingeStopLabelEl = document.getElementById('hinge_stop_label');
 var latchStopLabelEl = document.getElementById('latch_stop_label');
 var hingeStopOptionEl = document.getElementById('hinge_stop_option');
 var latchStopOptionEl = document.getElementById('latch_stop_option');
+var inactiveDoorTabItem = document.getElementById('inactive-door-tab-item');
+var activeDoorTabBtn = document.getElementById('active-door-tab');
 function updateHanding() {
     var isPair = handingSelect.value.startsWith('pair');
-    document.getElementById('second_leaf').style.display = isPair ? 'block' : 'none';
+    inactiveDoorTabItem.style.display = isPair ? '' : 'none';
+    if (!isPair) {
+        var tab = new bootstrap.Tab(activeDoorTabBtn);
+        tab.show();
+    }
     document.querySelectorAll('.single-only').forEach(function(el){
         el.style.display = isPair ? 'none' : '';
     });
@@ -668,6 +694,22 @@ if (presetSelect) {
         if (lock) document.querySelector("select[name='lock_rail']").value = lock;
         if (top) document.querySelector("select[name='top_rail']").value = top;
         if (bottom) document.querySelector("select[name='bottom_rail']").value = bottom;
+    });
+}
+
+var presetSelect2 = document.getElementById('preset_select_2');
+if (presetSelect2) {
+    presetSelect2.addEventListener('change', function() {
+        var opt = this.options[this.selectedIndex];
+        if (!opt) return;
+        var hinge = opt.dataset.hinge || '';
+        var lock = opt.dataset.lock || '';
+        var top = opt.dataset.top || '';
+        var bottom = opt.dataset.bottom || '';
+        if (hinge) document.querySelector("select[name='hinge_rail_2']").value = hinge;
+        if (lock) document.querySelector("select[name='lock_rail_2']").value = lock;
+        if (top) document.querySelector("select[name='top_rail_2']").value = top;
+        if (bottom) document.querySelector("select[name='bottom_rail_2']").value = bottom;
     });
 }
 
@@ -753,7 +795,7 @@ summaryTab.addEventListener('shown.bs.tab', async function () {
     addPartByName('bottom_rail', railCut);
     addPartByName('hinge_rail', stileCut);
     addPartByName('lock_rail', stileCut);
-    if(document.getElementById('second_leaf').style.display === 'block'){
+    if(handingSelect.value.startsWith('pair')){
         var hingeSelect2 = document.querySelector("select[name='hinge_rail_2']");
         var lockSelect2 = document.querySelector("select[name='lock_rail_2']");
         var hingeLz2 = parseFloat(hingeSelect2 && hingeSelect2.selectedOptions.length ? hingeSelect2.selectedOptions[0].dataset.lz || 0 : 0) || 0;
@@ -846,16 +888,16 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
     addRow('Bottom Rail', document.querySelector("select[name='bottom_rail']"), railCut);
     addRow('Hinge Rail', hingeSelect, stileCut);
     addRow('Lock Rail', lockSelect, stileCut);
-    if(document.getElementById('second_leaf').style.display === 'block'){
+    if(handingSelect.value.startsWith('pair')){
         var hingeSelect2 = document.querySelector("select[name='hinge_rail_2']");
         var lockSelect2 = document.querySelector("select[name='lock_rail_2']");
         var hingeLz2 = parseFloat(hingeSelect2 && hingeSelect2.selectedOptions.length ? hingeSelect2.selectedOptions[0].dataset.lz || 0 : 0) || 0;
         var lockLz2 = parseFloat(lockSelect2 && lockSelect2.selectedOptions.length ? lockSelect2.selectedOptions[0].dataset.lz || 0 : 0) || 0;
         var railCut2 = width - hingeGap - latchGap - hingeLz2 - lockLz2;
-        addRow('Second Hinge Rail', hingeSelect2, stileCut);
-        addRow('Second Lock Rail', lockSelect2, stileCut);
-        addRow('Second Top Rail', document.querySelector("select[name='top_rail_2']"), railCut2);
-        addRow('Second Bottom Rail', document.querySelector("select[name='bottom_rail_2']"), railCut2);
+        addRow('Inactive Hinge Rail', hingeSelect2, stileCut);
+        addRow('Inactive Lock Rail', lockSelect2, stileCut);
+        addRow('Inactive Top Rail', document.querySelector("select[name='top_rail_2']"), railCut2);
+        addRow('Inactive Bottom Rail', document.querySelector("select[name='bottom_rail_2']"), railCut2);
     }
 
     var doorHeadSelect = document.querySelector("select[name='door_header']");
