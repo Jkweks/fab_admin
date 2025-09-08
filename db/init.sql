@@ -153,6 +153,22 @@ ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_rail_2_id INTEGER
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS lock_rail_2_id INTEGER REFERENCES door_parts(id);
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS top_rail_2_id INTEGER REFERENCES door_parts(id);
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS bottom_rail_2_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS frame_system VARCHAR(255);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS frame_finish VARCHAR(255);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_jamb_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS lock_jamb_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS rh_hinge_jamb_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS lh_hinge_jamb_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS door_header_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS transom_header_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_door_stop_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS latch_door_stop_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS horizontal_transom_gutter_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS horizontal_transom_stop_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS vertical_transom_gutter_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS vertical_transom_stop_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS head_transom_stop_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS transom_head_perimeter_filler_id INTEGER REFERENCES door_parts(id);
 
 INSERT INTO users (email, password, first_name, last_name, role, is_dev) VALUES
 ('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin', TRUE),
