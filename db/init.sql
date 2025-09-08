@@ -163,6 +163,7 @@ ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS door_header_id INTEGER 
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS transom_header_id INTEGER REFERENCES door_parts(id);
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_door_stop_id INTEGER REFERENCES door_parts(id);
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS latch_door_stop_id INTEGER REFERENCES door_parts(id);
+ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS head_door_stop_id INTEGER REFERENCES door_parts(id);
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS horizontal_transom_gutter_id INTEGER REFERENCES door_parts(id);
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS horizontal_transom_stop_id INTEGER REFERENCES door_parts(id);
 ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS vertical_transom_gutter_id INTEGER REFERENCES door_parts(id);

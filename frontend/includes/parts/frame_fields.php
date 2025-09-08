@@ -7,6 +7,7 @@
         <option value='transom_header'>Transom Header</option>
         <option value='hinge_door_stop'>Hinge Door Stop</option>
         <option value='latch_door_stop'>Latch Door Stop</option>
+        <option value='head_door_stop'>Head Door Stop</option>
         <option value='horizontal_transom_gutter'>Horizontal Transom Gutter</option>
         <option value='horizontal_transom_stop'>Horizontal Transom Stop</option>
         <option value='vertical_transom_gutter'>Vertical Transom Gutter</option>

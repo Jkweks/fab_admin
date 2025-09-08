@@ -18,7 +18,7 @@ if ($config_id) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $config_id = $_POST['id'] ?? null;
     if ($config_id) {
-        $stmt = $pdo->prepare('UPDATE door_configurations SET name=?, has_transom=?, opening_width=?, opening_height=?, frame_height=?, glazing_thickness=?, hinge_rail_id=?, lock_rail_id=?, top_rail_id=?, bottom_rail_id=?, top_gap=?, bottom_gap=?, hinge_gap=?, latch_gap=?, handing=?, hinge_rail_2_id=?, lock_rail_2_id=?, top_rail_2_id=?, bottom_rail_2_id=?, frame_system=?, frame_finish=?, hinge_jamb_id=?, lock_jamb_id=?, rh_hinge_jamb_id=?, lh_hinge_jamb_id=?, door_header_id=?, transom_header_id=?, hinge_door_stop_id=?, latch_door_stop_id=?, horizontal_transom_gutter_id=?, horizontal_transom_stop_id=?, vertical_transom_gutter_id=?, vertical_transom_stop_id=?, head_transom_stop_id=?, transom_head_perimeter_filler_id=? WHERE id=?');
+        $stmt = $pdo->prepare('UPDATE door_configurations SET name=?, has_transom=?, opening_width=?, opening_height=?, frame_height=?, glazing_thickness=?, hinge_rail_id=?, lock_rail_id=?, top_rail_id=?, bottom_rail_id=?, top_gap=?, bottom_gap=?, hinge_gap=?, latch_gap=?, handing=?, hinge_rail_2_id=?, lock_rail_2_id=?, top_rail_2_id=?, bottom_rail_2_id=?, frame_system=?, frame_finish=?, hinge_jamb_id=?, lock_jamb_id=?, rh_hinge_jamb_id=?, lh_hinge_jamb_id=?, door_header_id=?, transom_header_id=?, hinge_door_stop_id=?, latch_door_stop_id=?, head_door_stop_id=?, horizontal_transom_gutter_id=?, horizontal_transom_stop_id=?, vertical_transom_gutter_id=?, vertical_transom_stop_id=?, head_transom_stop_id=?, transom_head_perimeter_filler_id=? WHERE id=?');
         $stmt->execute([
             $_POST['name'],
             isset($_POST['has_transom']) ? 1 : 0,
@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['transom_header'] !== '' ? $_POST['transom_header'] : null,
             $_POST['hinge_door_stop'] !== '' ? $_POST['hinge_door_stop'] : null,
             $_POST['latch_door_stop'] !== '' ? $_POST['latch_door_stop'] : null,
+            $_POST['head_door_stop'] !== '' ? $_POST['head_door_stop'] : null,
             $_POST['horizontal_transom_gutter'] !== '' ? $_POST['horizontal_transom_gutter'] : null,
             $_POST['horizontal_transom_stop'] !== '' ? $_POST['horizontal_transom_stop'] : null,
             $_POST['vertical_transom_gutter'] !== '' ? $_POST['vertical_transom_gutter'] : null,
@@ -61,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cfg_stmt->execute([$config_id]);
         $config = $cfg_stmt->fetch();
     } else {
-        $stmt = $pdo->prepare('INSERT INTO door_configurations (work_order_id, name, has_transom, opening_width, opening_height, frame_height, glazing_thickness, hinge_rail_id, lock_rail_id, top_rail_id, bottom_rail_id, top_gap, bottom_gap, hinge_gap, latch_gap, handing, hinge_rail_2_id, lock_rail_2_id, top_rail_2_id, bottom_rail_2_id, frame_system, frame_finish, hinge_jamb_id, lock_jamb_id, rh_hinge_jamb_id, lh_hinge_jamb_id, door_header_id, transom_header_id, hinge_door_stop_id, latch_door_stop_id, horizontal_transom_gutter_id, horizontal_transom_stop_id, vertical_transom_gutter_id, vertical_transom_stop_id, head_transom_stop_id, transom_head_perimeter_filler_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id');
+        $stmt = $pdo->prepare('INSERT INTO door_configurations (work_order_id, name, has_transom, opening_width, opening_height, frame_height, glazing_thickness, hinge_rail_id, lock_rail_id, top_rail_id, bottom_rail_id, top_gap, bottom_gap, hinge_gap, latch_gap, handing, hinge_rail_2_id, lock_rail_2_id, top_rail_2_id, bottom_rail_2_id, frame_system, frame_finish, hinge_jamb_id, lock_jamb_id, rh_hinge_jamb_id, lh_hinge_jamb_id, door_header_id, transom_header_id, hinge_door_stop_id, latch_door_stop_id, head_door_stop_id, horizontal_transom_gutter_id, horizontal_transom_stop_id, vertical_transom_gutter_id, vertical_transom_stop_id, head_transom_stop_id, transom_head_perimeter_filler_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id');
         $stmt->execute([
             $_POST['work_order'],
             $_POST['name'],
@@ -93,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['transom_header'] !== '' ? $_POST['transom_header'] : null,
             $_POST['hinge_door_stop'] !== '' ? $_POST['hinge_door_stop'] : null,
             $_POST['latch_door_stop'] !== '' ? $_POST['latch_door_stop'] : null,
+            $_POST['head_door_stop'] !== '' ? $_POST['head_door_stop'] : null,
             $_POST['horizontal_transom_gutter'] !== '' ? $_POST['horizontal_transom_gutter'] : null,
             $_POST['horizontal_transom_stop'] !== '' ? $_POST['horizontal_transom_stop'] : null,
             $_POST['vertical_transom_gutter'] !== '' ? $_POST['vertical_transom_gutter'] : null,
@@ -118,8 +120,9 @@ $hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.pa
 $lock_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $door_header_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'door_header' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $transom_header_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'transom_header' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$hinge_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$latch_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'latch_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$hinge_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$latch_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly, dp.lz FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'latch_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
+$head_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'head_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $horizontal_transom_gutter_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'horizontal_transom_gutter' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $horizontal_transom_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'horizontal_transom_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $vertical_transom_gutter_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'vertical_transom_gutter' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
@@ -407,7 +410,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='hinge_door_stop'>
                                             <option value='' id='hinge_stop_option'>Select Hinge Door Stop</option>
                                             <?php foreach ($hinge_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['hinge_door_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['hinge_door_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -416,7 +419,16 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='latch_door_stop'>
                                             <option value='' id='latch_stop_option'>Select Latch Door Stop</option>
                                             <?php foreach ($latch_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['latch_door_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-lz='<?php echo htmlspecialchars($part['lz']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['latch_door_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class='mb-3'>
+                                        <label class='form-label'>Head Door Stop</label>
+                                        <select class='form-select frame-part-select' name='head_door_stop'>
+                                            <option value=''>Select Head Door Stop</option>
+                                            <?php foreach ($head_door_stop_parts as $part): ?>
+                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame' <?php if (($config['head_door_stop_id'] ?? '') == $part['id']) echo 'selected'; ?>><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -480,7 +492,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                 </div>
                                 <div class='tab-pane fade' id='cutlist' role='tabpanel'>
                                     <table class='table'>
-                                        <thead><tr><th>Part</th><th>Cut Length</th></tr></thead>
+                                        <thead><tr><th>Part</th><th>Part Number</th><th>Cut Length</th></tr></thead>
                                         <tbody id='cutlist-body'></tbody>
                                     </table>
                                 </div>
@@ -507,7 +519,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <p><strong>Second Bottom Rail:</strong> <span id='summary-bottom2'></span></p>
                                         <h6 class='mt-4'>Parts Summary</h6>
                                         <table class='table'>
-                                            <thead><tr><th>Type</th><th>Part Number</th><th>Description</th><th>Qty</th></tr></thead>
+                                            <thead><tr><th>Type</th><th>Part Number</th><th>Description</th><th>Qty</th><th>Stock Lengths</th></tr></thead>
                                             <tbody id='summary-parts-body'></tbody>
                                         </table>
                                     </div>
@@ -703,20 +715,80 @@ summaryTab.addEventListener('shown.bs.tab', async function () {
     document.getElementById('summary-top2').textContent = selText('top_rail_2');
     document.getElementById('summary-bottom2').textContent = selText('bottom_rail_2');
 
+    var width = parseFloat(document.querySelector("input[name='opening_width']").value) || 0;
+    var height = parseFloat(document.querySelector("input[name='opening_height']").value) || 0;
+    var topGap = parseFloat(document.getElementById('top_gap').value) || 0;
+    var bottomGap = parseFloat(document.getElementById('bottom_gap').value) || 0;
+    var hingeGap = parseFloat(document.getElementById('hinge_gap').value) || 0;
+    var latchGap = parseFloat(document.getElementById('latch_gap').value) || 0;
+    var hingeSelect = document.querySelector("select[name='hinge_rail']");
+    var lockSelect = document.querySelector("select[name='lock_rail']");
+    var hingeLz = parseFloat(hingeSelect && hingeSelect.selectedOptions.length ? hingeSelect.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+    var lockLz = parseFloat(lockSelect && lockSelect.selectedOptions.length ? lockSelect.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+    var railCut = width - hingeGap - latchGap - hingeLz - lockLz;
+    var stileCut = height - topGap - bottomGap;
+    var frameHeight = parseFloat(document.querySelector("input[name='frame_height']").value) || 0;
+    var hasTransom = document.getElementById('has_transom').checked;
+    var doorHeadSelect = document.querySelector("select[name='door_header']");
+    var doorHeadLy = parseFloat(doorHeadSelect && doorHeadSelect.selectedOptions.length ? doorHeadSelect.selectedOptions[0].dataset.ly || 0 : 0) || 0;
+    var doorHeadLz = parseFloat(doorHeadSelect && doorHeadSelect.selectedOptions.length ? doorHeadSelect.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+    var jambLength = hasTransom ? frameHeight : (height + doorHeadLz);
+    var jambStopLength = height;
+    var hingeStopSel = document.querySelector("select[name='hinge_door_stop']");
+    var latchStopSel = document.querySelector("select[name='latch_door_stop']");
+    var headStopSel = document.querySelector("select[name='head_door_stop']");
+    var hingeStopLz = parseFloat(hingeStopSel && hingeStopSel.selectedOptions.length ? hingeStopSel.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+    var latchStopLz = parseFloat(latchStopSel && latchStopSel.selectedOptions.length ? latchStopSel.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+    var headStopLen = width - hingeStopLz - latchStopLz;
+
     var parts = [];
-    function collect(container){
-        document.querySelectorAll(container + ' select').forEach(function(sel){
-            if(sel.value){
-                var opt = sel.selectedOptions[0];
-                var pn = opt.dataset.partNumber;
-                if(pn){
-                    parts.push({id: sel.value, part_number: pn, type: opt.dataset.category, description: opt.text, quantity:1});
-                }
-            }
-        });
+    function addPartByName(name, length){
+        var sel = document.querySelector("select[name='" + name + "']");
+        if(sel && sel.value){
+            var opt = sel.selectedOptions[0];
+            parts.push({id: sel.value, part_number: opt.dataset.partNumber, type: opt.dataset.category, description: opt.text, quantity:1, length:length});
+        }
     }
-    collect('#parts');
-    collect('#frame');
+    addPartByName('top_rail', railCut);
+    addPartByName('bottom_rail', railCut);
+    addPartByName('hinge_rail', stileCut);
+    addPartByName('lock_rail', stileCut);
+    if(document.getElementById('second_leaf').style.display === 'block'){
+        var hingeSelect2 = document.querySelector("select[name='hinge_rail_2']");
+        var lockSelect2 = document.querySelector("select[name='lock_rail_2']");
+        var hingeLz2 = parseFloat(hingeSelect2 && hingeSelect2.selectedOptions.length ? hingeSelect2.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+        var lockLz2 = parseFloat(lockSelect2 && lockSelect2.selectedOptions.length ? lockSelect2.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+        var railCut2 = width - hingeGap - latchGap - hingeLz2 - lockLz2;
+        addPartByName('hinge_rail_2', stileCut);
+        addPartByName('lock_rail_2', stileCut);
+        addPartByName('top_rail_2', railCut2);
+        addPartByName('bottom_rail_2', railCut2);
+    }
+    addPartByName('hinge_jamb', jambLength);
+    addPartByName('lock_jamb', jambLength);
+    addPartByName('rh_hinge_jamb', jambLength);
+    addPartByName('lh_hinge_jamb', jambLength);
+    addPartByName('door_header', width);
+    addPartByName('hinge_door_stop', jambStopLength);
+    addPartByName('latch_door_stop', jambStopLength);
+    addPartByName('head_door_stop', headStopLen);
+    if(hasTransom){
+        var horizStopSel = document.querySelector("select[name='horizontal_transom_stop']");
+        var horizGutterSel = document.querySelector("select[name='horizontal_transom_gutter']");
+        var vertStopSel = document.querySelector("select[name='vertical_transom_stop']");
+        var vertGutterSel = document.querySelector("select[name='vertical_transom_gutter']");
+        var headTransomStopSel = document.querySelector("select[name='head_transom_stop']");
+        var transomHeadFillerSel = document.querySelector("select[name='transom_head_perimeter_filler']");
+        var horizStopLy = parseFloat(horizStopSel && horizStopSel.selectedOptions.length ? horizStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
+        var headTransomStopLy = parseFloat(headTransomStopSel && headTransomStopSel.selectedOptions.length ? headTransomStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
+        var verticalLen = frameHeight - height - doorHeadLy - horizStopLy - headTransomStopLy;
+        addPartByName('horizontal_transom_stop', width);
+        addPartByName('horizontal_transom_gutter', width);
+        addPartByName('head_transom_stop', width);
+        addPartByName('transom_head_perimeter_filler', width);
+        addPartByName('vertical_transom_stop', verticalLen);
+        addPartByName('vertical_transom_gutter', verticalLen);
+    }
     var base = parts.slice();
     await Promise.all(base.map(function(p){
         return fetch('get_required_parts.php?id=' + encodeURIComponent(p.id))
@@ -730,14 +802,17 @@ summaryTab.addEventListener('shown.bs.tab', async function () {
     var grouped = {};
     parts.forEach(function(p){
         if(!grouped[p.part_number]){
-            grouped[p.part_number] = {part_number:p.part_number, description:p.description, type:p.type, quantity:0};
+            grouped[p.part_number] = {part_number:p.part_number, description:p.description, type:p.type, quantity:0, totalLength:0};
         }
         grouped[p.part_number].quantity += p.quantity;
+        if(p.length){ grouped[p.part_number].totalLength += p.length * p.quantity; }
     });
     var rows = Object.values(grouped).sort(function(a,b){
         return a.type.localeCompare(b.type) || a.part_number.localeCompare(b.part_number);
     }).map(function(p){
-        return '<tr><td>' + (p.type.charAt(0).toUpperCase() + p.type.slice(1)) + '</td><td>' + p.part_number + '</td><td>' + p.description + '</td><td>' + p.quantity + '</td></tr>';
+        var stockLen = p.type === 'frame' ? 288 : (p.type === 'door' ? 252 : null);
+        var stockQty = stockLen ? Math.ceil(p.totalLength / stockLen) : '';
+        return '<tr><td>' + (p.type.charAt(0).toUpperCase() + p.type.slice(1)) + '</td><td>' + p.part_number + '</td><td>' + p.description + '</td><td>' + p.quantity + '</td><td>' + stockQty + '</td></tr>';
     }).join('');
     document.getElementById('summary-parts-body').innerHTML = rows;
 });
@@ -761,49 +836,49 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
     var hasTransom = document.getElementById('has_transom').checked;
     var body = document.getElementById('cutlist-body');
     body.innerHTML = '';
-    if (!isNaN(railCut)) {
-        body.innerHTML += '<tr><td>Top Rail</td><td>' + railCut.toFixed(3) + '</td></tr>';
-        body.innerHTML += '<tr><td>Bottom Rail</td><td>' + railCut.toFixed(3) + '</td></tr>';
-    }
-    if (!isNaN(stileCut)) {
-        body.innerHTML += '<tr><td>Hinge Rail</td><td>' + stileCut.toFixed(3) + '</td></tr>';
-        body.innerHTML += '<tr><td>Lock Rail</td><td>' + stileCut.toFixed(3) + '</td></tr>';
-        if (document.getElementById('second_leaf').style.display === 'block') {
-            var hingeSelect2 = document.querySelector("select[name='hinge_rail_2']");
-            var lockSelect2 = document.querySelector("select[name='lock_rail_2']");
-            var hingeLz2 = parseFloat(hingeSelect2.options[hingeSelect2.selectedIndex].dataset.lz || 0) || 0;
-            var lockLz2 = parseFloat(lockSelect2.options[lockSelect2.selectedIndex].dataset.lz || 0) || 0;
-            var railCut2 = width - hingeGap - latchGap - hingeLz2 - lockLz2;
-            body.innerHTML += '<tr><td>Second Hinge Rail</td><td>' + stileCut.toFixed(3) + '</td></tr>';
-            body.innerHTML += '<tr><td>Second Lock Rail</td><td>' + stileCut.toFixed(3) + '</td></tr>';
-            if (!isNaN(railCut2)) {
-                body.innerHTML += '<tr><td>Second Top Rail</td><td>' + railCut2.toFixed(3) + '</td></tr>';
-                body.innerHTML += '<tr><td>Second Bottom Rail</td><td>' + railCut2.toFixed(3) + '</td></tr>';
-            }
+    function addRow(label, sel, len){
+        if(sel && sel.value && !isNaN(len)){
+            var pn = sel.selectedOptions[0].dataset.partNumber || '';
+            body.innerHTML += '<tr><td>' + label + '</td><td>' + pn + '</td><td>' + len.toFixed(3) + '</td></tr>';
         }
+    }
+    addRow('Top Rail', document.querySelector("select[name='top_rail']"), railCut);
+    addRow('Bottom Rail', document.querySelector("select[name='bottom_rail']"), railCut);
+    addRow('Hinge Rail', hingeSelect, stileCut);
+    addRow('Lock Rail', lockSelect, stileCut);
+    if(document.getElementById('second_leaf').style.display === 'block'){
+        var hingeSelect2 = document.querySelector("select[name='hinge_rail_2']");
+        var lockSelect2 = document.querySelector("select[name='lock_rail_2']");
+        var hingeLz2 = parseFloat(hingeSelect2 && hingeSelect2.selectedOptions.length ? hingeSelect2.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+        var lockLz2 = parseFloat(lockSelect2 && lockSelect2.selectedOptions.length ? lockSelect2.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+        var railCut2 = width - hingeGap - latchGap - hingeLz2 - lockLz2;
+        addRow('Second Hinge Rail', hingeSelect2, stileCut);
+        addRow('Second Lock Rail', lockSelect2, stileCut);
+        addRow('Second Top Rail', document.querySelector("select[name='top_rail_2']"), railCut2);
+        addRow('Second Bottom Rail', document.querySelector("select[name='bottom_rail_2']"), railCut2);
     }
 
     var doorHeadSelect = document.querySelector("select[name='door_header']");
     var doorHeadLy = parseFloat(doorHeadSelect && doorHeadSelect.selectedOptions.length ? doorHeadSelect.selectedOptions[0].dataset.ly || 0 : 0) || 0;
     var doorHeadLz = parseFloat(doorHeadSelect && doorHeadSelect.selectedOptions.length ? doorHeadSelect.selectedOptions[0].dataset.lz || 0 : 0) || 0;
     var jambLength = hasTransom ? frameHeight : (height + doorHeadLz);
-    function addIf(sel, label, len){
-        if(sel && sel.value && !isNaN(len)){
-            body.innerHTML += '<tr><td>' + label + '</td><td>' + len.toFixed(3) + '</td></tr>';
-        }
-    }
-    addIf(document.querySelector("select[name='hinge_jamb']"), 'Hinge Jamb', jambLength);
-    addIf(document.querySelector("select[name='lock_jamb']"), 'Lock Jamb', jambLength);
-    addIf(document.querySelector("select[name='rh_hinge_jamb']"), 'RH Hinge Jamb', jambLength);
-    addIf(document.querySelector("select[name='lh_hinge_jamb']"), 'LH Hinge Jamb', jambLength);
-    addIf(document.querySelector("select[name='door_header']"), 'Door Header', width);
+    addRow('Hinge Jamb', document.querySelector("select[name='hinge_jamb']"), jambLength);
+    addRow('Lock Jamb', document.querySelector("select[name='lock_jamb']"), jambLength);
+    addRow('RH Hinge Jamb', document.querySelector("select[name='rh_hinge_jamb']"), jambLength);
+    addRow('LH Hinge Jamb', document.querySelector("select[name='lh_hinge_jamb']"), jambLength);
+    addRow('Door Header', doorHeadSelect, width);
     var jambStopLength = height;
     var hingeStopSel = document.querySelector("select[name='hinge_door_stop']");
     var lockStopSel = document.querySelector("select[name='latch_door_stop']");
+    var headStopSel = document.querySelector("select[name='head_door_stop']");
     var hingeStopLabel = isPair ? 'RH Hinge Stop' : 'Hinge Door Stop';
     var lockStopLabel = isPair ? 'LH Hinge Stop' : 'Latch Door Stop';
-    addIf(hingeStopSel, hingeStopLabel, jambStopLength);
-    addIf(lockStopSel, lockStopLabel, jambStopLength);
+    addRow(hingeStopLabel, hingeStopSel, jambStopLength);
+    addRow(lockStopLabel, lockStopSel, jambStopLength);
+    var hingeStopLz = parseFloat(hingeStopSel && hingeStopSel.selectedOptions.length ? hingeStopSel.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+    var lockStopLz = parseFloat(lockStopSel && lockStopSel.selectedOptions.length ? lockStopSel.selectedOptions[0].dataset.lz || 0 : 0) || 0;
+    var headStopLen = width - hingeStopLz - lockStopLz;
+    addRow('Head Door Stop', headStopSel, headStopLen);
     if(hasTransom){
         var horizStopSel = document.querySelector("select[name='horizontal_transom_stop']");
         var horizGutterSel = document.querySelector("select[name='horizontal_transom_gutter']");
@@ -814,12 +889,12 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
         var horizStopLy = parseFloat(horizStopSel && horizStopSel.selectedOptions.length ? horizStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
         var headTransomStopLy = parseFloat(headTransomStopSel && headTransomStopSel.selectedOptions.length ? headTransomStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
         var verticalLen = frameHeight - height - doorHeadLy - horizStopLy - headTransomStopLy;
-        addIf(horizStopSel, 'Horizontal Transom Stop', width);
-        addIf(horizGutterSel, 'Horizontal Transom Gutter', width);
-        addIf(headTransomStopSel, 'Head Transom Stop', width);
-        addIf(transomHeadFillerSel, 'Transom Head Perimeter Filler', width);
-        addIf(vertStopSel, 'Vertical Transom Stop', verticalLen);
-        addIf(vertGutterSel, 'Vertical Transom Gutter', verticalLen);
+        addRow('Horizontal Transom Stop', horizStopSel, width);
+        addRow('Horizontal Transom Gutter', horizGutterSel, width);
+        addRow('Head Transom Stop', headTransomStopSel, width);
+        addRow('Transom Head Perimeter Filler', transomHeadFillerSel, width);
+        addRow('Vertical Transom Stop', vertStopSel, verticalLen);
+        addRow('Vertical Transom Gutter', vertGutterSel, verticalLen);
     }
 });
 </script>
