@@ -84,13 +84,10 @@ $systems = $pdo->query("SELECT m.name AS manufacturer, s.name AS system FROM sys
 
 $hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $lock_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lock_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$rh_hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'rh_hinge_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$lh_hinge_jamb_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'lh_hinge_jamb' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $door_header_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'door_header' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $transom_header_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'transom_header' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $hinge_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'hinge_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $latch_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'latch_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
-$head_door_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'head_door_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $horizontal_transom_gutter_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'horizontal_transom_gutter' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $horizontal_transom_stop_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number, dp.ly FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'horizontal_transom_stop' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
 $vertical_transom_gutter_parts = $pdo->query("SELECT dp.id, dp.manufacturer, dp.system, dp.part_number FROM door_parts dp JOIN door_part_functions dpf ON dp.id = dpf.part_id WHERE dpf.function = 'vertical_transom_gutter' AND dp.category = 'frame' ORDER BY dp.manufacturer, dp.system, dp.part_number")->fetchAll();
@@ -341,7 +338,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <label class='form-label'>RH Hinge Jamb</label>
                                         <select class='form-select frame-part-select' name='rh_hinge_jamb'>
                                             <option value=''>Select RH Hinge Jamb</option>
-                                            <?php foreach ($rh_hinge_jamb_parts as $part): ?>
+                                            <?php foreach ($hinge_jamb_parts as $part): ?>
                                                 <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
@@ -350,7 +347,7 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <label class='form-label'>LH Hinge Jamb</label>
                                         <select class='form-select frame-part-select' name='lh_hinge_jamb'>
                                             <option value=''>Select LH Hinge Jamb</option>
-                                            <?php foreach ($lh_hinge_jamb_parts as $part): ?>
+                                            <?php foreach ($hinge_jamb_parts as $part): ?>
                                                 <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
@@ -387,15 +384,6 @@ $transom_head_perimeter_filler_parts = $pdo->query("SELECT dp.id, dp.manufacture
                                         <select class='form-select frame-part-select' name='latch_door_stop'>
                                             <option value=''>Select Latch Door Stop</option>
                                             <?php foreach ($latch_door_stop_parts as $part): ?>
-                                                <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class='mb-3'>
-                                        <label class='form-label'>Head Door Stop</label>
-                                        <select class='form-select frame-part-select' name='head_door_stop'>
-                                            <option value=''>Select Head Door Stop</option>
-                                            <?php foreach ($head_door_stop_parts as $part): ?>
                                                 <option value='<?php echo htmlspecialchars($part['id']); ?>' data-system='<?php echo htmlspecialchars($part['system']); ?>' data-ly='<?php echo htmlspecialchars($part['ly']); ?>' data-part-number='<?php echo htmlspecialchars($part['part_number']); ?>' data-category='frame'><?php echo htmlspecialchars($part['manufacturer'] . ' ' . $part['system'] . ' ' . $part['part_number']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
@@ -767,8 +755,6 @@ cutlistTab.addEventListener('shown.bs.tab', function(){
     var lockStopLy = parseFloat(lockStopSel && lockStopSel.selectedOptions.length ? lockStopSel.selectedOptions[0].dataset.ly || 0 : 0) || 0;
     addIf(hingeStopSel, 'Hinge Jamb Stop', jambStopLength);
     addIf(lockStopSel, 'Lock Jamb Stop', jambStopLength);
-    var headStopLen = width - lockStopLy - hingeStopLy;
-    addIf(document.querySelector("select[name='head_door_stop']"), 'Head Door Stop', headStopLen);
     if(hasTransom){
         var horizStopSel = document.querySelector("select[name='horizontal_transom_stop']");
         var horizGutterSel = document.querySelector("select[name='horizontal_transom_gutter']");
