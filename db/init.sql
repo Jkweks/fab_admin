@@ -1,14 +1,15 @@
+-- Initialize Fab Admin database
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    role VARCHAR(50) NOT NULL DEFAULT 'user',
+    is_dev BOOLEAN NOT NULL DEFAULT FALSE,
+    theme VARCHAR(20) NOT NULL DEFAULT 'light'
 );
-
-ALTER TABLE users ADD COLUMN IF NOT EXISTS first_name VARCHAR(255);
-ALTER TABLE users ADD COLUMN IF NOT EXISTS last_name VARCHAR(255);
-ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) NOT NULL DEFAULT 'user';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS is_dev BOOLEAN NOT NULL DEFAULT FALSE;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS theme VARCHAR(20) NOT NULL DEFAULT 'light';
 
 CREATE TABLE IF NOT EXISTS jobs (
     id SERIAL PRIMARY KEY,
@@ -28,24 +29,6 @@ CREATE TABLE IF NOT EXISTS work_orders (
     UNIQUE (job_id, work_order_number)
 );
 
-ALTER TABLE work_orders ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'draft';
-
-CREATE TABLE IF NOT EXISTS work_order_items (
-    id SERIAL PRIMARY KEY,
-    work_order_id INTEGER REFERENCES work_orders(id) ON DELETE CASCADE,
-    item_type VARCHAR(50) NOT NULL,
-    elevation VARCHAR(255),
-    quantity INTEGER,
-    scope VARCHAR(50),
-    comments TEXT,
-    date_required DATE,
-    date_completed DATE,
-    completed_by INTEGER REFERENCES users(id),
-    door_configuration_id INTEGER REFERENCES door_configurations(id)
-);
-
-ALTER TABLE work_order_items ADD COLUMN IF NOT EXISTS door_configuration_id INTEGER REFERENCES door_configurations(id);
-
 CREATE TABLE IF NOT EXISTS manufacturers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL
@@ -57,19 +40,6 @@ CREATE TABLE IF NOT EXISTS systems (
     manufacturer_id INTEGER REFERENCES manufacturers(id) ON DELETE CASCADE,
     UNIQUE (name, manufacturer_id)
 );
-
-ALTER TABLE systems ADD COLUMN IF NOT EXISTS manufacturer_id INTEGER REFERENCES manufacturers(id) ON DELETE CASCADE;
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1
-        FROM pg_constraint
-        WHERE conname = 'systems_name_manufacturer_unique'
-    ) THEN
-        ALTER TABLE systems
-            ADD CONSTRAINT systems_name_manufacturer_unique UNIQUE (name, manufacturer_id);
-    END IF;
-END $$;
 
 CREATE TABLE IF NOT EXISTS door_parts (
     id SERIAL PRIMARY KEY,
@@ -112,8 +82,6 @@ CREATE TABLE IF NOT EXISTS door_part_presets (
     bottom_rail_id INTEGER REFERENCES door_parts(id)
 );
 
-ALTER TABLE door_parts ADD COLUMN IF NOT EXISTS usage VARCHAR(50);
-
 CREATE TABLE IF NOT EXISTS system_default_parts (
     id SERIAL PRIMARY KEY,
     system_id INTEGER REFERENCES systems(id) ON DELETE CASCADE,
@@ -135,41 +103,48 @@ CREATE TABLE IF NOT EXISTS door_configurations (
     hinge_rail_id INTEGER REFERENCES door_parts(id),
     lock_rail_id INTEGER REFERENCES door_parts(id),
     top_rail_id INTEGER REFERENCES door_parts(id),
-    bottom_rail_id INTEGER REFERENCES door_parts(id)
+    bottom_rail_id INTEGER REFERENCES door_parts(id),
+    top_gap NUMERIC,
+    bottom_gap NUMERIC,
+    hinge_gap NUMERIC,
+    latch_gap NUMERIC,
+    handing VARCHAR(20),
+    hinge_rail_2_id INTEGER REFERENCES door_parts(id),
+    lock_rail_2_id INTEGER REFERENCES door_parts(id),
+    top_rail_2_id INTEGER REFERENCES door_parts(id),
+    bottom_rail_2_id INTEGER REFERENCES door_parts(id),
+    frame_system VARCHAR(255),
+    frame_finish VARCHAR(255),
+    hinge_jamb_id INTEGER REFERENCES door_parts(id),
+    lock_jamb_id INTEGER REFERENCES door_parts(id),
+    rh_hinge_jamb_id INTEGER REFERENCES door_parts(id),
+    lh_hinge_jamb_id INTEGER REFERENCES door_parts(id),
+    door_header_id INTEGER REFERENCES door_parts(id),
+    transom_header_id INTEGER REFERENCES door_parts(id),
+    hinge_door_stop_id INTEGER REFERENCES door_parts(id),
+    latch_door_stop_id INTEGER REFERENCES door_parts(id),
+    head_door_stop_id INTEGER REFERENCES door_parts(id),
+    horizontal_transom_gutter_id INTEGER REFERENCES door_parts(id),
+    horizontal_transom_stop_id INTEGER REFERENCES door_parts(id),
+    vertical_transom_gutter_id INTEGER REFERENCES door_parts(id),
+    vertical_transom_stop_id INTEGER REFERENCES door_parts(id),
+    head_transom_stop_id INTEGER REFERENCES door_parts(id),
+    transom_head_perimeter_filler_id INTEGER REFERENCES door_parts(id)
 );
 
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS work_order_id INTEGER REFERENCES work_orders(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS has_transom BOOLEAN DEFAULT FALSE;
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS opening_width NUMERIC;
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS opening_height NUMERIC;
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS frame_height NUMERIC;
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS glazing_thickness VARCHAR(10);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS top_gap NUMERIC;
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS bottom_gap NUMERIC;
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_gap NUMERIC;
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS latch_gap NUMERIC;
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS handing VARCHAR(20);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_rail_2_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS lock_rail_2_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS top_rail_2_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS bottom_rail_2_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS frame_system VARCHAR(255);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS frame_finish VARCHAR(255);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_jamb_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS lock_jamb_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS rh_hinge_jamb_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS lh_hinge_jamb_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS door_header_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS transom_header_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS hinge_door_stop_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS latch_door_stop_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS head_door_stop_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS horizontal_transom_gutter_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS horizontal_transom_stop_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS vertical_transom_gutter_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS vertical_transom_stop_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS head_transom_stop_id INTEGER REFERENCES door_parts(id);
-ALTER TABLE door_configurations ADD COLUMN IF NOT EXISTS transom_head_perimeter_filler_id INTEGER REFERENCES door_parts(id);
+CREATE TABLE IF NOT EXISTS work_order_items (
+    id SERIAL PRIMARY KEY,
+    work_order_id INTEGER REFERENCES work_orders(id) ON DELETE CASCADE,
+    item_type VARCHAR(50) NOT NULL,
+    elevation VARCHAR(255),
+    quantity INTEGER,
+    scope VARCHAR(50),
+    comments TEXT,
+    date_required DATE,
+    date_completed DATE,
+    completed_by INTEGER REFERENCES users(id),
+    door_configuration_id INTEGER REFERENCES door_configurations(id)
+);
 
 INSERT INTO users (email, password, first_name, last_name, role, is_dev) VALUES
 ('jonk@vosglass.com', '$2y$12$tjzQUJSfUPYl0zv78yK0PeB46dApBH3ox6xIndP4Fc6HgZV2XsODe', 'Jon', 'K', 'admin', TRUE),
@@ -182,3 +157,4 @@ ON CONFLICT (email) DO NOTHING;
 INSERT INTO jobs (job_name, job_number, project_manager) VALUES
 ('Example Job', '1001', (SELECT id FROM users WHERE email='adama@example.com'))
 ON CONFLICT (job_number) DO NOTHING;
+
